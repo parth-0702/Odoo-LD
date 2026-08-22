@@ -1,0 +1,95 @@
+.smart-draft-intent-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.voice-intent-button,
+.smart-draft-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 9px 12px;
+  border: 1px dashed var(--ink);
+  border-radius: 7px 5px 8px 6px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, .36);
+  font-family: inherit;
+  font-size: 9px;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out, cubic-bezier(.23, 1, .32, 1)), background 160ms var(--ease-out, cubic-bezier(.23, 1, .32, 1));
+}
+
+.voice-intent-button:hover:not(:disabled),
+.smart-draft-refresh:hover:not(:disabled) {
+  background: #dcebd8;
+  transform: translateY(-1px) rotate(-.3deg);
+}
+
+.voice-intent-button:active:not(:disabled),
+.smart-draft-refresh:active:not(:disabled) {
+  transform: scale(.97);
+}
+
+.voice-intent-button[aria-pressed="true"] {
+  border-style: solid;
+  color: #8d3029;
+  background: #fde1d6;
+  animation: voice-pulse 1.2s ease-in-out infinite;
+}
+
+.voice-intent-button:disabled,
+.smart-draft-refresh:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.voice-intent-hint {
+  grid-column: 1 / -1;
+  margin: -3px 0 0;
+  color: var(--muted-ink);
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+.smart-draft-result-head-actions {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+
+.smart-draft-unavailable {
+  margin-top: 28px;
+  padding: 28px;
+  border: 1.5px solid var(--ink);
+  border-radius: 8px 5px 10px 6px;
+  background: #fde1d6;
+}
+
+.smart-draft-unavailable h2 { margin: 7px 0; font-size: 39px; }
+.smart-draft-unavailable > p:not(.eyebrow) { max-width: 700px; color: var(--muted-ink); font-size: 11px; line-height: 1.7; }
+.smart-draft-unavailable > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 18px; }
+.smart-draft-unavailable span { margin-right: 4px; color: var(--muted-ink); font-size: 9px; }
+.smart-draft-unavailable b { padding: 6px 8px; border: 1px dashed var(--ink); border-radius: 99px; color: var(--sea); background: rgba(255,255,255,.45); font-size: 9px; }
+
+@keyframes voice-pulse {
+  50% { box-shadow: 0 0 0 5px rgba(211, 91, 69, .14); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voice-intent-button[aria-pressed="true"] { animation: none; }
+}
+
+@media (max-width: 780px) {
+  .smart-draft-intent-actions,
+  .smart-draft-result-head-actions { align-items: stretch; flex-direction: column; }
+  .smart-draft-intent-actions .ink-button,
+  .smart-draft-intent-actions .voice-intent-button,
+  .smart-draft-refresh { width: 100%; }
+  .smart-draft-result-head-actions { width: 100%; }
+  .smart-draft-unavailable { padding: 20px; }
+  .smart-draft-unavailable h2 { font-size: 34px; }
+}

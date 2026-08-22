@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1787381996772,
+      "tag": "0000_flawless_spiral",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1787382312253,
+      "tag": "0001_faulty_black_crow",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1787393773324,
+      "tag": "0002_sloppy_texas_twister",
+      "breakpoints": true
+    }
+  ]
+}

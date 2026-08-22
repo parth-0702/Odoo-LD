@@ -1,0 +1,121 @@
+/* Light parchment travel desk — applied only to the authenticated workspace. */
+.workspace-shell {
+  --paper: #fffaf0;
+  --paper-deep: #f4ead7;
+  --ink: #20211e;
+  --muted-ink: #6d6a61;
+  --red: #d9513d;
+  --sun: #f1b94c;
+  --sea: #2c7a70;
+  --line: #24241e;
+  --shadow: 4px 5px 0 rgba(32,33,30,.16);
+  --shadow-big: 8px 10px 0 rgba(32,33,30,.14);
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(rgba(44,42,35,.055) .7px, transparent .7px), linear-gradient(90deg, rgba(221,208,180,.16) 1px, transparent 1px);
+  background-size: 7px 7px, 80px 80px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+body:has(.workspace-shell) { background: var(--paper); }
+.workspace-shell .workspace-main { color: var(--ink); background: transparent; }
+.workspace-shell h1, .workspace-shell h2, .workspace-shell h3, .workspace-shell .logo-mark { font-family: "Caveat", cursive; }
+.workspace-shell .workspace-sidebar { border-color: var(--ink); background: rgba(255,250,240,.93); box-shadow: none; }
+.workspace-shell .workspace-header, .workspace-shell .mobile-desk-nav { border-color: rgba(32,33,30,.22); background: rgba(255,250,240,.84); backdrop-filter: blur(12px); }
+.workspace-shell .profile-scribble, .workspace-shell .sidebar-bottom { border-color: rgba(32,33,30,.45); }
+.workspace-shell .profile-scribble > span { color: var(--paper); background: var(--sea); }
+.workspace-shell .nav-item, .workspace-shell .crumb, .workspace-shell .text-button, .workspace-shell .outline-button { color: var(--muted-ink); }
+.workspace-shell .nav-item:hover { color: var(--ink); background: rgba(241,185,76,.17); }
+.workspace-shell .nav-item.is-active { color: var(--ink); background: #f4d477; box-shadow: 2px 3px 0 rgba(32,33,30,.14); }
+.workspace-shell .ink-button { border-color: var(--ink); color: var(--paper); background: var(--ink); box-shadow: 3px 3px 0 var(--red); font-weight: 500; }
+.workspace-shell .outline-button { border-color: var(--ink); background: rgba(255,255,255,.34); }
+.workspace-shell .outline-button:hover, .workspace-shell .text-button:hover, .workspace-shell .crumb:hover { color: var(--red); background: transparent; }
+.workspace-shell .paper-panel, .workspace-shell .trip-card, .workspace-shell .inspiration-card, .workspace-shell .map-card, .workspace-shell .empty-trip { border-color: var(--ink); color: var(--ink); background: rgba(255,255,255,.46); box-shadow: 3px 4px 0 rgba(32,33,30,.09); }
+.workspace-shell .trip-card:hover, .workspace-shell .trip-card.active, .workspace-shell .inspiration-card:hover { background: #fffdf7; box-shadow: var(--shadow); }
+.workspace-shell .trip-card p, .workspace-shell .trip-card span:not(.trip-index), .workspace-shell .entry-copy p, .workspace-shell .torn-note p:not(.eyebrow), .workspace-shell .mini-stop small { color: var(--muted-ink); }
+.workspace-shell .desk-memo { border-color: var(--ink); background: #f0d56f; color: var(--ink); }
+.workspace-shell .torn-note { border-color: var(--ink); background: #dcebd8; color: var(--ink); }
+.workspace-shell .day-tab { border-color: rgba(32,33,30,.6); color: var(--muted-ink); background: transparent; }
+.workspace-shell .day-tab.active { color: var(--ink); border-color: var(--ink); background: #f4d477; box-shadow: 2px 2px 0 rgba(32,33,30,.15); }
+.workspace-shell .entry-type { color: var(--paper); border-color: var(--ink); background: var(--ink); }
+.workspace-shell .entry-type.transport { color: var(--ink); border-color: var(--ink); background: #dcebd8; }
+.workspace-shell .entry-type.stay { color: var(--ink); border-color: var(--ink); background: #f4d477; }
+.workspace-shell .quick-add input, .workspace-shell input, .workspace-shell textarea, .workspace-shell select { color: var(--ink); border-color: rgba(32,33,30,.55); background: rgba(255,255,255,.5); font-size: 12px; }
+.workspace-shell input::placeholder, .workspace-shell textarea::placeholder { color: #8a867d; }
+
+/* Smart Draft: keep detailed plans readable against the light paper surface. */
+.workspace-shell .smart-draft-pane { color: var(--ink); }
+.workspace-shell .smart-draft-hero p:not(.eyebrow), .workspace-shell .smart-draft-result-head p:not(.eyebrow), .workspace-shell .smart-schedule p { color: var(--muted-ink); font-size: 12px; }
+.workspace-shell .smart-draft-intent { border-color: var(--ink); background: #f4d477; box-shadow: 4px 4px 0 rgba(32,33,30,.15); }
+.workspace-shell .smart-draft-intent label, .workspace-shell .smart-draft-intent textarea { color: var(--ink); font-size: 12px; }
+.workspace-shell .smart-draft-intent textarea { border-color: var(--ink); }
+.workspace-shell .voice-intent-button, .workspace-shell .smart-draft-refresh { color: var(--ink); border-color: var(--ink); background: rgba(255,255,255,.38); font-size: 10px; }
+.workspace-shell .voice-intent-button:hover:not(:disabled), .workspace-shell .smart-draft-refresh:hover:not(:disabled) { color: var(--ink); background: #dcebd8; }
+.workspace-shell .smart-draft-budget, .workspace-shell .smart-city-grid article, .workspace-shell .smart-schedule, .workspace-shell .smart-draft-unavailable { border-color: var(--ink); color: var(--ink); background: rgba(255,255,255,.38); }
+.workspace-shell .smart-city-grid article:nth-child(2) { background: #dcebd8; }
+.workspace-shell .smart-city-grid article:nth-child(3) { background: #fde1d6; }
+.workspace-shell .smart-city-grid p, .workspace-shell .smart-city-grid small, .workspace-shell .smart-schedule > article > span, .workspace-shell .smart-schedule p, .workspace-shell .smart-draft-actions p { color: var(--muted-ink); font-size: 10px; }
+.workspace-shell .smart-schedule > article { border-color: rgba(32,33,30,.4); }
+.workspace-shell .smart-schedule > article i { color: var(--sea); border-color: var(--ink); background: var(--paper); }
+.workspace-shell .smart-draft-actions { border-color: var(--ink); background: #fde1d6; }
+.workspace-shell .smart-draft-unavailable { background: #fde1d6; }
+.workspace-shell .smart-day-plan { grid-template-columns: 72px 35px minmax(0,1fr) auto; padding: 17px 0; }
+.workspace-shell .smart-day-plan-time { display: grid; gap: 3px; align-content: start; color: var(--muted-ink); font-size: 9px; }
+.workspace-shell .smart-day-plan-time strong { color: var(--sea); font-family: "DM Mono", ui-monospace, monospace; font-size: 14px; letter-spacing: 0; }
+.workspace-shell .smart-day-plan-copy strong { font-family: "Caveat", cursive; font-size: 29px; }
+.workspace-shell .smart-practical-note { margin-top: 8px !important; color: #4d514a !important; line-height: 1.55; }
+.workspace-shell .smart-day-plan-copy small { display: block; margin-top: 9px; color: #8c5730; font-size: 9px; line-height: 1.45; }
+
+/* Supplied world globe stays a bright physical object on the parchment desk. */
+.workspace-shell .smart-draft-globe { position: relative; display: grid; width: 148px; height: 148px; flex: 0 0 148px; place-items: center; overflow: hidden; margin: 0; border: 1.5px solid var(--ink); border-radius: 50%; background: #fffdf8; box-shadow: 5px 7px 0 rgba(32,33,30,.14); }
+.workspace-shell .smart-draft-globe::after { position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 24px rgba(3,11,22,.15); content: ""; pointer-events: none; }
+.workspace-shell .smart-draft-globe img { width: 100%; height: 100%; object-fit: cover; object-position: center 38%; transform: scale(1.14); }
+.workspace-shell .smart-draft-globe figcaption { position: absolute; right: 9px; bottom: 10px; z-index: 1; margin: 0; padding: 4px 6px; border-radius: 4px; color: var(--ink); background: rgba(255,250,240,.88); font-size: 8px; font-weight: 800; line-height: 1.25; letter-spacing: .07em; text-align: right; text-transform: uppercase; }
+
+/* Timeline and editor retain clear contrast in the light workspace. */
+.workspace-shell .timeline-board-head p:not(.eyebrow), .workspace-shell .timeline-card p, .workspace-shell .timeline-card > div:nth-child(3) > span, .workspace-shell .timeline-entry-editor > div p:not(.eyebrow), .workspace-shell .timeline-entry-editor label, .workspace-shell .timeline-composer label { color: var(--muted-ink); font-size: 10px; }
+.workspace-shell .timeline-mode-switch, .workspace-shell .timeline-day-rail button, .workspace-shell .timeline-card, .workspace-shell .timeline-spine { border-color: rgba(32,33,30,.55); }
+.workspace-shell .timeline-day-rail button { color: var(--ink); background: rgba(255,255,255,.38); }
+.workspace-shell .timeline-day-rail button.is-active { color: var(--ink); border-color: var(--ink); background: #f4d477; box-shadow: 3px 3px 0 rgba(32,33,30,.16); }
+.workspace-shell .timeline-mode-switch button { color: var(--muted-ink); font-size: 9px; }
+.workspace-shell .timeline-mode-switch button.is-active { color: var(--paper); background: var(--ink); }
+.workspace-shell .timeline-card time { color: var(--red); font-size: 10px; }
+.workspace-shell .timeline-card > i { color: var(--sea); border-color: var(--ink); background: var(--paper); }
+.workspace-shell .timeline-card-actions select { color: var(--muted-ink); border-color: rgba(32,33,30,.45); background: rgba(255,255,255,.4); font-size: 9px; }
+.workspace-shell .timeline-composer { border-color: var(--ink); background: #dcebd8; }
+.workspace-shell .timeline-entry-editor { border-color: var(--ink); background: #fde1d6; }
+.workspace-shell .timeline-entry-editor input, .workspace-shell .timeline-entry-editor select, .workspace-shell .timeline-entry-editor textarea, .workspace-shell .timeline-composer input, .workspace-shell .timeline-composer select { color: var(--ink); border-color: var(--ink); background: transparent; font-size: 10px; }
+.workspace-shell .timeline-entry-editor h3, .workspace-shell .timeline-card strong { color: var(--ink); }
+
+/* Readability pass: retain hand-drawn display lettering only for headings. */
+.workspace-shell .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+.workspace-shell .nav-item, .workspace-shell .crumb, .workspace-shell .text-button { font-size: 13px; }
+.workspace-shell .profile-scribble strong, .workspace-shell .profile-scribble small, .workspace-shell .header-discover { font-size: 12px; }
+.workspace-shell .ink-button, .workspace-shell .outline-button, .workspace-shell .voice-intent-button, .workspace-shell .smart-draft-refresh { font-size: 13px; font-weight: 650; }
+.workspace-shell .smart-draft-hero p:not(.eyebrow), .workspace-shell .smart-draft-result-head p:not(.eyebrow), .workspace-shell .smart-schedule p { font-size: 15px; line-height: 1.65; }
+.workspace-shell .smart-draft-intent label { font-size: 13px; font-weight: 700; }
+.workspace-shell .smart-draft-intent textarea { font-size: 15px; line-height: 1.55; }
+.workspace-shell .smart-city-grid p, .workspace-shell .smart-city-grid small, .workspace-shell .smart-schedule > article > span, .workspace-shell .smart-schedule p, .workspace-shell .smart-draft-actions p { font-size: 12px; line-height: 1.55; }
+.workspace-shell .smart-day-plan-time { font-size: 12px; }
+.workspace-shell .smart-day-plan-time strong { font-size: 16px; }
+.workspace-shell .smart-practical-note { font-size: 13px; line-height: 1.65; }
+.workspace-shell .smart-day-plan-copy small { font-size: 12px; line-height: 1.55; }
+.workspace-shell .timeline-board-head p:not(.eyebrow), .workspace-shell .timeline-card p, .workspace-shell .timeline-card > div:nth-child(3) > span, .workspace-shell .timeline-entry-editor > div p:not(.eyebrow), .workspace-shell .timeline-entry-editor label, .workspace-shell .timeline-composer label { font-size: 13px; line-height: 1.6; }
+.workspace-shell .timeline-mode-switch button, .workspace-shell .timeline-card time, .workspace-shell .timeline-card-actions select { font-size: 12px; }
+.workspace-shell .timeline-card strong { font-size: 34px; line-height: 1; }
+.workspace-shell .timeline-entry-editor input, .workspace-shell .timeline-entry-editor select, .workspace-shell .timeline-entry-editor textarea, .workspace-shell .timeline-composer input, .workspace-shell .timeline-composer select { font-size: 14px; line-height: 1.5; }
+.workspace-shell .timeline-day-rail span, .workspace-shell .timeline-day-rail small { font-size: 11px; }
+.workspace-shell .timeline-day-rail strong { font-size: 28px; }
+.workspace-shell .trip-card p, .workspace-shell .trip-card span:not(.trip-index), .workspace-shell .entry-copy p, .workspace-shell .torn-note p:not(.eyebrow), .workspace-shell .mini-stop small { font-size: 13px; line-height: 1.6; }
+.workspace-shell .quick-add input, .workspace-shell input, .workspace-shell textarea, .workspace-shell select { font-size: 14px; line-height: 1.45; }
+.workspace-shell .preferences-grid label, .workspace-shell .preferences-grid input, .workspace-shell .preferences-grid textarea, .workspace-shell .preferences-grid select, .workspace-shell .profile-copy, .workspace-shell .profile-card p, .workspace-shell .saved-destination-strip > span, .workspace-shell .saved-destination-strip button, .workspace-shell .budget-empty, .workspace-shell .expense-error { font-size: 13px; line-height: 1.55; }
+
+@media (max-width: 780px) {
+  .workspace-shell .smart-day-plan { grid-template-columns: 56px 30px minmax(0,1fr); }
+  .workspace-shell .smart-day-plan > b { grid-column: 3; }
+  .workspace-shell .smart-day-plan-copy strong { font-size: 24px; }
+  .workspace-shell .smart-draft-globe { width: 80px; height: 80px; flex-basis: 80px; }
+  .workspace-shell .smart-draft-globe figcaption { display: none; }
+}

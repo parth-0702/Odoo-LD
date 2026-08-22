@@ -1,0 +1,106 @@
+# Project TODO
+
+- [x] Define and apply the hand-drawn travel-sketch design system with responsive typography, paper textures, drafting marks, and reduced-motion rules.
+- [x] Build a compelling responsive landing experience with destination discovery, trip-planning calls to action, and animated route visuals.
+- [x] Add authenticated traveler workspace navigation, loading feedback, and personal trip overview states.
+- [x] Create the multi-step new-trip flow for destinations, dates, traveler count, budget, preferences, and multi-city setup.
+- [x] Implement trip persistence models, tRPC procedures, and database queries for trips, stops, itinerary entries, expenses, favorites, and shared trip summaries.
+- [x] Build the editable multi-city itinerary workspace with day-by-day timeline, activity, transport, accommodation, scheduling, reorder, edit, and delete controls.
+- [x] Integrate Google Maps destination search, selected-location context, journey route rendering, and itinerary map markers.
+- [x] Build trip budget and expense tracking with category totals, budget comparison, warnings, and empty/validation/error states.
+- [x] Build destination exploration and saved-destination workflows.
+- [x] Build shareable public trip summaries and copy-trip behavior.
+- [x] Build profile, settings, and an admin-focused operational dashboard view.
+- [x] Add staggered reveals, hover feedback, polished transitions, and responsive mobile-to-desktop layouts.
+- [x] Add and run targeted Vitest coverage for budget calculation and core trip planning utilities.
+- [x] Verify the rendered experience on desktop and mobile, then save a final project checkpoint.
+- [x] Persist saved destinations and provide a traveler-facing saved-destination workflow.
+- [x] Add edit controls and mutation support for existing itinerary entries.
+- [x] Add explicit expense validation, mutation-error, and empty-state feedback.
+- [x] Add a distinct profile view alongside traveler preference settings.
+- [x] Save the validated final project checkpoint.
+- [x] Diagnose local npm install and npm run compatibility errors and document the supported development commands.
+- [x] Push the complete GlobeTrotter codebase to GitHub repository 24CS046Dharm/odoooo.
+- [x] Fix the downloaded ZIP so its Start a plan action works in a standard local run without deployment-only services.
+- [x] Create and deliver a clean downloadable GlobeTrotter source ZIP archive.
+- [x] Make the downloaded project present a locally usable preview-like workspace with browser-based persistence when managed services are unavailable.
+- [x] Package and deliver an updated ZIP containing the local preview-like workspace.
+- [x] Extract the attached GlobeTrotter PDF requirements and reconcile them with the current project.
+- [x] Add a local email-and-password authentication screen with sign-up, login, validation, and reset-request feedback.
+- [x] Complete local dashboard quick actions, recommended cities, budget highlights, and recent-trip management.
+- [x] Extend local trip creation with description and optional browser-stored cover-photo support.
+- [x] Add complete local trip-card view, edit, and delete controls with persistence.
+- [x] Complete itinerary stop management with stop dates, city search metadata, filtering, add/remove, and reordering controls.
+- [x] Complete activity discovery with type, cost, and duration filters; detailed activity cards; and add/remove actions.
+- [x] Add calendar/list view modes with editable day activities and explicit drag/reorder alternatives.
+- [x] Complete budget categories, average daily cost, budget alerts, and chart visualization in local mode.
+- [x] Complete public shared itinerary, copy-trip, and share-summary actions in local mode.
+- [x] Complete profile settings for local photo, email, language, saved places, privacy guidance, and reset/delete-account behavior.
+- [x] Complete the local admin analytics dashboard with trip, destination, and engagement indicators.
+- [x] Implement every missing functional flow identified by the PDF checklist.
+- [x] Validate the PDF checklist in both local browser-persistent and authenticated workspace modes.
+- [x] Package and deliver the final PDF-compliant project archive.
+- [x] Add browser-local account registration and password verification for the local signup and login flow.
+- [x] Add dashboard budget highlights, direct recommendation cards, and explicit trip-card management controls.
+- [x] Add persisted dates and durations for individual itinerary stops.
+- [x] Add local activity cost/duration filters and explicit trip-assignment removal controls.
+- [x] Add direct editing controls for existing local itinerary activities.
+- [x] Revalidate all PDF checklist flows after the final local-mode refinements.
+- [x] Add true local itinerary-item editing for activity title, time, type, and notes.
+- [x] Revalidate the authenticated workspace alongside local workflows and the public share/copy flow.
+- [x] Validate the authenticated workspace’s core desk, itinerary, budget, and sharing paths after the PDF completion work.
+- [x] Validate a real browser-local public itinerary page with copy-summary and copy-trip behavior.
+- [x] Fix the authenticated `/app` crash by formatting Date values before rendering them in React.
+- [x] Implement a switchable day-by-day timeline view in the authenticated itinerary.
+- [x] Add direct authenticated timeline editing for existing entry time, type, and notes.
+- [x] Add loading, success, and error feedback for authenticated timeline mutations.
+- [x] Re-validate day switching, timeline/agenda modes, and entry rescheduling in the `/app` itinerary.
+- [x] Add explicit pending controls for timeline add, reschedule, delete, edit, and reorder mutations.
+- [x] Perform a visual authenticated itinerary validation of the timeline and agenda views.
+- [x] Add a direct agenda-mode link and visually validate both authenticated itinerary display modes.
+- [x] Inspect the supplied AI service archive and reconcile it with the project’s travel data model.
+- [x] Build Smart Trip Drafting with database-grounded city selection, activity itinerary drafting, and budget-aware intent handling.
+- [x] Add an authenticated Smart Trip Drafting experience that sends the draft into the editable itinerary workflow.
+- [x] Validate AI draft grounding, manual itinerary editing, and failure states before release.
+- [x] Add automated coverage for grounded draft creation, trip persistence, and itinerary population.
+- [x] Validate the authenticated draft-import handoff into an editable itinerary route.
+- [x] Validate Smart Trip Drafting client-side validation and backend-failure feedback states.
+- [x] Add an automated persistence-level test for Smart Draft trip, stop, and itinerary creation from grounded catalog IDs.
+- [x] Exercise the authenticated Smart Draft import handoff into the editable itinerary timeline.
+- [x] Exercise and verify short-intent and backend-failure feedback in Smart Trip Drafting.
+- [x] Add tested shared validation for short Smart Trip Drafting intent input.
+- [x] Validate the create-draft handoff contract into the authenticated itinerary route.
+- [x] Ensure shared Smart Draft validation and handoff tests are executed by the automated test suite.
+- [x] Verify the Smart Draft import handoff contract from trip creation through the editable itinerary URL.
+- [x] Test the Smart Draft create-trip callback handoff to selected-trip, itinerary view, and authenticated itinerary navigation.
+- [x] Assess supported dynamic LLM and voice intent-capture options for Smart Trip Drafting.
+- [x] Add dynamic catalog-grounded AI refinement controls to Smart Trip Drafting.
+- [x] Add optional voice capture for trip-intent transcription with accessible recording states.
+- [x] Validate dynamic AI, voice fallback, and editable itinerary import behavior.
+- [x] Restore the selected authenticated trip from the itinerary deep-link query parameter after reload.
+- [x] Add focused automated coverage for voice availability and post-import itinerary navigation contracts.
+- [x] Detect destination and region terms in Smart Draft input against the live catalog.
+- [x] Prevent silent unrelated fallback recommendations when a requested destination is not catalogued.
+- [x] Show actionable catalog-coverage feedback and test the India-style unsupported-destination case.
+- [x] Expand grounded Smart Draft results into detailed, travel-ready daily itinerary guidance.
+- [x] Add realistic daily travel structure, timing, and practical itinerary notes using only catalog-grounded activities.
+- [x] Redesign the authenticated workspace with a legible dark travel-console theme and cultural explorer accents.
+- [x] Validate contrast, responsive readability, detailed itinerary generation, and editable import behavior.
+- [x] Verify a fresh detailed Smart Draft import creates timed, practical editable itinerary entries.
+- [x] Add automated persistence coverage for multiple detailed entries per day and their saved guidance notes.
+- [x] Exercise the detailed Smart Draft generation-to-import path and verify the saved itinerary entries in the authenticated database.
+- [x] Exercise the live Smart Draft generation function before importing and verify its detailed saved itinerary entries.
+- [x] Restore the previous dark workspace visual styling shown in the supplied reference.
+- [x] Replace the Smart Draft header mark with the supplied globe visual and responsive placement.
+- [x] Validate desktop and mobile readability after the restored theme and globe update.
+- [x] Document visual acceptance of the restored workspace theme against the supplied reference at desktop and mobile sizes.
+- [x] Capture and document explicit desktop and mobile visual acceptance notes for the restored theme and globe placement.
+- [x] Replace the authenticated dark workspace surfaces with the supplied light parchment theme.
+- [x] Preserve readable Smart Draft controls, detailed itinerary cards, and globe placement in the light theme.
+- [x] Validate desktop and mobile contrast, overflow, and detailed itinerary usability after the theme conversion.
+- [x] Document desktop and mobile QA acceptance for the light parchment Smart Draft and detailed itinerary views.
+- [x] Improve authenticated workspace typography and contrast for easier reading.
+- [x] Review the source code against the nine requested Odoo Hackathone 2026 attributes.
+- [x] Validate readable desktop and mobile workspace views and the review evidence.
+- [x] Deliver the scored technical review and onsite-round recommendation.
+- [x] Document post-readability desktop and mobile acceptance for Smart Draft and detailed itinerary text, wrapping, and overflow.
