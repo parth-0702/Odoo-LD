@@ -146,13 +146,7 @@ App will be available at `http://localhost:5173` (frontend) and `http://localhos
 
 ---
 
-## 👥 Team
 
-| Name | Role | GitHub |
-|---|---|---|
-| Your Name | Full Stack | @yourhandle |
-| Teammate 2 | Frontend | @handle |
-| Teammate 3 | Backend | @handle |
 
 ---
 
