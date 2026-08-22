@@ -5,482 +5,966 @@
 - Repository: Odoo-LD
 - Branch: manav-work
 - Module: ai-service
-- Purpose: Smart Trip Drafting for GlobeTrotter
+- Purpose: AI-powered travel assistance and future Smart Trip Drafting for GlobeTrotter
+- Current implementation stage: Task 3 complete
 
 ---
 
-## Current Status
+# Current Status
 
-Status: IN PROGRESS
+**Status:** COMPLETE THROUGH TASK 3
 
-Current Task:
-Task 2 — Gemini provider integration
+**Current Task:**  
+Task 3 — Chat API
 
-Completed Through:
-Task 2
+**Completed Through:**
 
-Next Task:
-Task 3 — Chat API (/api/ai/chat)
+- Task 1 — Backend Foundation
+- Task 2 — Gemini Provider Integration
+- Task 3A — Basic Chat API
+- Task 3B — Chat Validation
+- Task 3C — Progress Documentation
 
----
-
-## Architecture
-
-A standalone Express (Node.js, JavaScript, not TypeScript) HTTP service.
-Currently it only exposes a health check. There is no AI provider, no
-database, and no authentication yet. The app is structured to add those
-pieces incrementally without restructuring existing code:
-
-- `routes/` wires URL paths to controllers.
-- `controllers/` contains request handlers (currently just health).
-- `providers/` now contains `gemini.provider.js`, which wraps the
-  `@google/genai` SDK behind a single `generateText(prompt)` function.
-  Nothing outside this file knows the Gemini SDK's call shape — a future
-  second provider (e.g. OpenAI) can be added as its own file exposing
-  the same kind of function, without touching routes/controllers.
-- `services/`, `prompts/`, `schemas/` are still empty placeholder
-  folders (each has a `.gitkeep`) reserved for future tasks (business
-  logic, prompt templates, and request/response schemas respectively).
-- `middleware/` (not in the original spec list, added because it was
-  needed to implement the required 404 handler and centralized error
-  handler cleanly) contains `notFound.js` and `errorHandler.js`.
+**Next Task:**  
+Task 4 — Not started
 
 ---
 
-## Current Folder Structure
+# Architecture
+
+The AI service is a standalone Node.js + Express HTTP service.
+
+The service is designed to remain independent from the frontend UI so that
+React, Vue, mobile applications, or other backend services can communicate
+with it through HTTP APIs.
+
+Current architecture:
 
 ```text
+Client / Frontend
+       |
+       | HTTP Request
+       v
+Express Routes
+       |
+       v
+Controllers
+       |
+       v
+Services
+       |
+       v
+Prompts
+       |
+       v
+AI Provider
+       |
+       v
+Google Gemini API
+Current Responsibilities
+routes/
+
+Defines HTTP endpoints and connects them to controllers.
+
+controllers/
+
+Handles HTTP requests, basic request validation, response formatting, and
+safe error responses.
+
+services/
+
+Contains application-level AI business logic.
+
+The current chat service is located at:
+
+src/services/chat.service.js
+prompts/
+
+Contains reusable AI prompts.
+
+The current chat system prompt is located at:
+
+src/prompts/chat.prompt.js
+providers/
+
+Contains provider-specific AI SDK integration.
+
+The current Gemini provider is:
+
+src/providers/gemini.provider.js
+
+The rest of the application communicates with Gemini through:
+
+generateText(prompt)
+
+This keeps Gemini SDK-specific code isolated from the controllers and
+services.
+
+middleware/
+
+Contains common HTTP middleware:
+
+src/middleware/notFound.js
+src/middleware/errorHandler.js
+schemas/
+
+Reserved for request/response validation as the project grows.
+
+Current Folder Structure
 ai-service/
 ├── src/
 │   ├── controllers/
 │   │   ├── ai.controller.js
 │   │   └── health.controller.js
+│   │
 │   ├── middleware/
 │   │   ├── errorHandler.js
 │   │   └── notFound.js
+│   │
+│   ├── prompts/
+│   │   ├── .gitkeep
+│   │   └── chat.prompt.js
+│   │
 │   ├── providers/
 │   │   └── gemini.provider.js
-│   ├── prompts/
-│   │   └── .gitkeep
+│   │
 │   ├── routes/
 │   │   ├── ai.routes.js
 │   │   └── health.routes.js
+│   │
 │   ├── schemas/
 │   │   └── .gitkeep
+│   │
 │   ├── services/
-│   │   └── .gitkeep
+│   │   ├── .gitkeep
+│   │   └── chat.service.js
+│   │
 │   └── index.js
+│
 ├── .env.example
 ├── .gitignore
 ├── package.json
-└── README.md
-```
-
----
-
-## Completed Tasks
-
-### Task 1 — Backend foundation + /health endpoint
+├── package-lock.json
+├── README.md
+└── AI_PROGRESS.md
+Completed Tasks
+Task 1 — Backend Foundation
 
 Status: COMPLETE
 
-Implemented:
-- Express app entrypoint (`src/index.js`) with `dotenv`, `cors`, and
-  `express.json()` middleware.
-- `GET /health` route returning `{ "status": "ok", "service": "globetrotter-ai" }`.
-- Centralized error handler middleware (`src/middleware/errorHandler.js`).
-- 404 handler middleware (`src/middleware/notFound.js`).
-- `npm run dev` (nodemon) and `npm start` (node) scripts.
-- Placeholder folders for future modules: `services/`, `providers/`,
-  `prompts/`, `schemas/` (each with `.gitkeep` so they're tracked by git
-  while empty).
+Implemented
 
-Files created/modified:
-- `ai-service/package.json`
-- `ai-service/.env.example`
-- `ai-service/.gitignore`
-- `ai-service/README.md`
-- `ai-service/src/index.js`
-- `ai-service/src/routes/health.routes.js`
-- `ai-service/src/controllers/health.controller.js`
-- `ai-service/src/middleware/notFound.js`
-- `ai-service/src/middleware/errorHandler.js`
-- `ai-service/src/services/.gitkeep`
-- `ai-service/src/providers/.gitkeep`
-- `ai-service/src/prompts/.gitkeep`
-- `ai-service/src/schemas/.gitkeep`
-- `ai-service/AI_PROGRESS.md` (this file)
+Created the initial standalone AI service using:
 
-Dependencies added:
-- `express` (^4.19.2) — HTTP server/routing
-- `cors` (^2.8.5) — CORS support so other frontends can call the API
-- `dotenv` (^16.4.5) — loads `.env` into `process.env`
-- `nodemon` (^3.1.4, devDependency) — auto-restart during development
-
-Endpoints added:
-- `GET /health`
-
-Testing performed:
-- Ran `npm install` — 99 packages installed, no errors.
-- Started the server with `node src/index.js`, confirmed console log
-  `globetrotter-ai service running on port 5001`.
-- `curl -i http://localhost:5001/health` → `200 OK`, body exactly
-  `{"status":"ok","service":"globetrotter-ai"}`.
-- `curl -i http://localhost:5001/nonexistent` → `404 Not Found`, body
-  `{"status":"error","message":"Route not found: GET /nonexistent"}`.
-- Server stopped cleanly after testing.
-
-Test result:
-PASS
-
-Important implementation details:
-- Default port is `5001` (set via `.env`, falls back to `5001` if unset).
-- `middleware/` folder was added beyond the originally listed folder set
-  because the task requires both a 404 handler and a centralized error
-  handler; keeping them in `middleware/` avoided cluttering
-  `controllers/` with non-request-handling logic. This is the only
-  structural deviation from the exact folder list in the task spec.
-- No AI provider, database, or authentication logic exists yet — all
-  deliberately deferred per the task scope.
-
----
-
-### Task 2 — Gemini provider integration
-
-Status: COMPLETE
+Node.js
+Express
+dotenv
+CORS
+JSON body parsing
+Nodemon for development
 
 Implemented:
-- `src/providers/gemini.provider.js` — wraps the `@google/genai` SDK.
-  Exposes a single `generateText(prompt)` async function that returns
-  Gemini's plain text response. The SDK client is created lazily (on
-  first call) so a missing `GEMINI_API_KEY` doesn't crash the server at
-  startup, only when the endpoint is actually hit.
-- `src/controllers/ai.controller.js` — `testAiConnection` handler. Calls
-  `generateText` with a fixed prompt and returns a safe JSON response.
-  On failure, logs the error server-side only and returns a generic
-  `502` with no provider details or key leaked to the client.
-- `src/routes/ai.routes.js` — mounts `GET /test` (combined with the
-  `/api/ai` prefix in `index.js`, giving `GET /api/ai/test`).
-- `index.js` updated to mount the new router: `app.use("/api/ai",
-  aiRoutes)`, added alongside (not replacing) the existing `/health`
-  mount.
-- `.env.example` updated with `GEMINI_API_KEY=` and `GEMINI_MODEL=`
-  (names only, no values).
 
-Files created/modified:
-- `ai-service/src/providers/gemini.provider.js` (new)
-- `ai-service/src/controllers/ai.controller.js` (new)
-- `ai-service/src/routes/ai.routes.js` (new)
-- `ai-service/src/index.js` (modified — added `aiRoutes` import and
-  `app.use("/api/ai", aiRoutes)`; `/health` mount left untouched)
-- `ai-service/.env.example` (modified — added Gemini variable names)
-- `ai-service/package.json` / `package-lock.json` (modified — new
-  dependency)
-- `ai-service/AI_PROGRESS.md` (this update)
+GET /health
 
-Dependencies added:
-- `@google/genai` — installed version **2.18.0** (confirmed via `npm ls
-  @google/genai` after install)
+Centralized:
 
-Gemini model used:
-- Default: `gemini-2.5-flash`, defined once in
-  `src/providers/gemini.provider.js` as `DEFAULT_MODEL`. Overridable at
-  runtime via the `GEMINI_MODEL` environment variable — no model name
-  is hard-coded anywhere else in the codebase.
+404 handling
+Error handling
 
-Environment variables (names only):
-```env
-PORT=
-NODE_ENV=
-GEMINI_API_KEY=
-GEMINI_MODEL=
-```
+Created placeholder directories for future:
 
-New endpoint:
-- `GET /api/ai/test` — sends a fixed prompt to Gemini
-  ("Respond with exactly: Gemini connection successful.") and returns
-  `{ "success": true, "message": "<gemini's reply>" }` on success, or
-  `{ "success": false, "message": "AI provider request failed." }`
-  with HTTP 502 on failure.
-
-Testing performed:
-- **Test 1 (Health):** `GET /health` → `200 OK`,
-  `{"status":"ok","service":"globetrotter-ai"}`. Unchanged from Task 1.
-  PASS.
-- **Test 2 (Gemini):** `GET /api/ai/test` → returned HTTP `502` with
-  `{"success":false,"message":"AI provider request failed."}`. This is
-  the *expected safe-failure path*, not a code bug: this development
-  sandbox's network egress allowlist does not include
-  `generativelanguage.googleapis.com`, so the outbound request to
-  Gemini is rejected before it reaches Google (confirmed server-side
-  log only: `Host not in allowlist: generativelanguage.googleapis.com`,
-  no API key present in that log line). **The Gemini round trip itself
-  has not been verified against the live API in this environment.** The
-  developer should re-run `GET /api/ai/test` with a real
-  `GEMINI_API_KEY` in `.env` on their own machine (which has normal
-  internet access) to confirm the live success path returns
-  `{"success":true,"message":"Gemini connection successful."}`.
-- **Test 3 (Unknown route):** `GET /api/ai/does-not-exist` → `404`,
-  `{"status":"error","message":"Route not found: GET /api/ai/does-not-exist"}`.
-  Existing 404 handler still works correctly. PASS.
-- **Test 4 (Git security):** Ran `git init` + `git add -A` in a
-  throwaway local check and confirmed `.env` does not appear in `git
-  status --short` output (blocked by `.gitignore`). `.env.example`
-  contains only variable names, no values. PASS.
-
-Test result:
-PASS for Tests 1, 3, 4. Test 2's error-handling path (safe failure, no
-leaked secrets) verified; the live Gemini success path is UNTESTED in
-this sandbox due to network egress restrictions and should be verified
-by the developer locally before Task 2 is considered fully proven.
-
-Error handling:
-- All Gemini SDK calls are wrapped in try/catch inside the controller.
-- On failure: logs `err.message` server-side only, returns generic
-  `502` JSON with no stack trace, no raw SDK error object, and no API
-  key exposed to the client.
-- Route-level errors (e.g. missing route) still go through the existing
-  404 handler; unexpected thrown errors elsewhere would still reach the
-  existing centralized `errorHandler` middleware, which was not
-  modified.
-
-Security considerations:
-- `GEMINI_API_KEY` is read only from `process.env`, never hard-coded.
-- `.env` remains in `.gitignore` (verified, see Test 4).
-- `.env.example` contains variable names only.
-- The API key is never included in any HTTP response, log line, or
-  this progress file.
-
-Known issues:
-- Live Gemini connectivity has not been verified in this development
-  sandbox because its network egress allowlist blocks
-  `generativelanguage.googleapis.com`. This is an environment
-  limitation, not an application bug. The developer must confirm the
-  live success path locally.
-
-Architecture decisions:
-- Kept the provider to a single file (`gemini.provider.js`) exposing
-  one function, per the task's explicit "do not over-engineer" and
-  "one provider is enough" instructions.
-- Client instantiation is lazy (inside `getClient()`) rather than at
-  module load time, so importing the provider never throws just because
-  `.env` isn't configured yet — the error only surfaces when
-  `generateText` is actually called.
-- Model name centralized as `DEFAULT_MODEL` inside the provider file,
-  overridable via `GEMINI_MODEL`, so no other file needs to know or
-  duplicate the model string.
-
----
-
-## Current API
-
-### GET /health
-
-Purpose:
-Confirms the service is running. Used for uptime checks and initial
-integration testing by the frontend team.
+services
+providers
+prompts
+schemas
+Health Endpoint
 
 Request:
-No parameters, no body.
 
-Response (200):
-```json
+GET /health
+
+Response:
+
 {
   "status": "ok",
   "service": "globetrotter-ai"
 }
-```
+Testing
 
-### GET /api/ai/test
+The health endpoint was successfully tested with HTTP 200.
 
-Purpose:
-Verifies the Node backend can successfully reach Gemini through the
-provider layer. Sends a fixed test prompt.
+The 404 handler was also tested with unknown routes.
 
-Request:
-No parameters, no body.
+Result
 
-Response (200, success):
-```json
+PASS
+
+Task 2 — Gemini Provider Integration
+
+Status: COMPLETE
+
+Implemented
+
+Created:
+
+src/providers/gemini.provider.js
+
+The provider uses:
+
+@google/genai
+
+and exposes:
+
+generateText(prompt)
+
+The Gemini SDK is isolated inside the provider layer.
+
+Controllers and services do not need to know the Gemini SDK request format.
+
+Default Model
+
+The provider currently uses:
+
+gemini-2.5-flash
+
+The model can be overridden with:
+
+GEMINI_MODEL=
+Environment Variables
+
+The service uses:
+
+PORT=
+NODE_ENV=
+GEMINI_API_KEY=
+GEMINI_MODEL=
+
+The actual API key is stored only in the local .env file.
+
+The key is not committed to Git.
+
+Gemini Test Endpoint
+
+Implemented:
+
+GET /api/ai/test
+
+The endpoint sends a fixed test prompt to Gemini.
+
+Successful response:
+
 {
   "success": true,
   "message": "Gemini connection successful."
 }
-```
 
-Response (502, failure):
-```json
+Provider failure response:
+
 {
   "success": false,
   "message": "AI provider request failed."
 }
-```
 
-### Unmatched routes
+The API key and raw provider errors are never returned to the client.
 
-Any request to a route that doesn't exist returns:
+Local Verification
 
-Response (404):
-```json
+The live Gemini connection was successfully tested on the developer's
+Windows machine using the real local API key.
+
+Verified response:
+
+{
+  "success": true,
+  "message": "Gemini connection successful."
+}
+Result
+
+PASS
+
+Task 3 — Chat API
+
+Status: COMPLETE
+
+Task 3 was divided into:
+
+Task 3A — Basic Chat API
+Task 3B — Validation
+Task 3C — Documentation
+Task 3A — Basic Chat API
+
+Status: COMPLETE
+
+Implemented
+
+Created:
+
+src/services/chat.service.js
+src/prompts/chat.prompt.js
+
+Modified:
+
+src/controllers/ai.controller.js
+src/routes/ai.routes.js
+Chat Endpoint
+
+Implemented:
+
+POST /api/ai/chat
+Request
+{
+  "message": "Hello, can you help me plan a trip?"
+}
+Successful Response
+{
+  "success": true,
+  "message": "<Gemini response>"
+}
+
+The exact Gemini response will vary depending on the request.
+
+Chat Service
+
+The chat service:
+
+Receives the user's message.
+Applies the travel-assistant system prompt.
+Calls the existing Gemini provider.
+Returns the generated response.
+
+The service reuses:
+
+src/providers/gemini.provider.js
+
+No second Gemini integration was created.
+
+Chat Prompt
+
+The current prompt defines a basic travel-planning assistant.
+
+It does not claim that the AI has access to:
+
+City database records
+Activity database records
+User trips
+User budgets
+Existing itineraries
+
+Those features are not implemented yet.
+
+Stateless Behavior
+
+The current chat API is stateless.
+
+It does not store or remember previous messages.
+
+For example:
+
+Request 1:
+"I want to visit Japan."
+
+Request 2:
+"What food should I try?"
+
+The second request does not automatically receive the first request as
+conversation context.
+
+Persistent conversation memory is not implemented.
+
+Provider Failure
+
+If Gemini fails, the API returns:
+
+{
+  "success": false,
+  "message": "AI provider request failed."
+}
+
+with HTTP status:
+
+502
+
+Raw Gemini errors are logged server-side only.
+
+Result
+
+PASS
+
+Task 3B — Chat Validation
+
+Status: COMPLETE
+
+The chat endpoint validates the message field.
+
+The message must:
+
+Exist
+Be a string
+Not be empty
+Not contain only whitespace
+
+Invalid input returns:
+
+{
+  "success": false,
+  "message": "Message is required."
+}
+
+with HTTP status:
+
+400
+Validation Test 1 — Missing Message
+
+Request:
+
+{}
+
+Result:
+
+HTTP 400
+
+Response:
+
+{
+  "success": false,
+  "message": "Message is required."
+}
+
+PASS
+
+Validation Test 2 — Empty Message
+
+Request:
+
+{
+  "message": ""
+}
+
+Result:
+
+HTTP 400
+
+PASS
+
+Validation Test 3 — Whitespace Message
+
+Request:
+
+{
+  "message": "   "
+}
+
+Result:
+
+HTTP 400
+
+PASS
+
+Validation Test 4 — Non-String Message
+
+Request:
+
+{
+  "message": 123
+}
+
+Result:
+
+HTTP 400
+
+PASS
+
+Validation Test 5 — Valid Message
+
+Request:
+
+{
+  "message": "Hello, can you help me plan a trip?"
+}
+
+Result:
+
+HTTP 200
+
+with a real Gemini-generated response.
+
+PASS
+
+Task 3C — Documentation
+
+Status: COMPLETE
+
+The project progress documentation was updated to reflect the completed
+Task 1, Task 2, and Task 3 work.
+
+Documentation records:
+
+Current architecture
+Current API endpoints
+Gemini integration
+Chat API
+Validation
+Current limitations
+Database status
+Smart Trip Drafting status
+Frontend integration status
+Future task handoff information
+
+No application logic was introduced by the documentation task.
+
+Current API
+1. Health Check
+GET /health
+
+Purpose:
+
+Checks whether the AI service is running.
+
+Response:
+
+{
+  "status": "ok",
+  "service": "globetrotter-ai"
+}
+2. Gemini Connectivity Test
+GET /api/ai/test
+
+Purpose:
+
+Verifies that the backend can communicate with Gemini.
+
+Successful response:
+
+{
+  "success": true,
+  "message": "Gemini connection successful."
+}
+
+Failure response:
+
+{
+  "success": false,
+  "message": "AI provider request failed."
+}
+3. Chat API
+POST /api/ai/chat
+
+Purpose:
+
+Provides a basic UI-independent travel chatbot.
+
+Request:
+
+{
+  "message": "Hello, can you help me plan a trip?"
+}
+
+Success:
+
+{
+  "success": true,
+  "message": "<Gemini response>"
+}
+
+Validation failure:
+
+{
+  "success": false,
+  "message": "Message is required."
+}
+
+Provider failure:
+
+{
+  "success": false,
+  "message": "AI provider request failed."
+}
+4. Unknown Routes
+
+Unknown routes are handled by the centralized 404 middleware.
+
+Example:
+
 {
   "status": "error",
-  "message": "Route not found: <METHOD> <path>"
+  "message": "Route not found: GET /unknown"
 }
-```
+Environment Configuration
 
----
+Example environment configuration:
 
-## Environment Variables
-
-```env
 PORT=5001
 NODE_ENV=development
 GEMINI_API_KEY=
 GEMINI_MODEL=
-```
+PORT
 
-`GEMINI_API_KEY` is required for `/api/ai/test` to succeed (obtained by
-the developer from Google AI Studio). `GEMINI_MODEL` is optional — a
-default is used if left blank. `.env` is git-ignored; only
-`.env.example` is committed, and it contains variable names only.
+Default development port:
 
----
+5001
+NODE_ENV
 
-## Dependencies
+Controls the current runtime environment.
 
-- `express` — core HTTP server and routing.
-- `cors` — allows browser-based frontends on other origins to call this
-  API.
-- `dotenv` — loads environment variables from `.env`.
-- `nodemon` (dev only) — restarts the server automatically on file
-  changes during development.
-- `@google/genai` (v2.18.0) — official Google Gen AI SDK, used only
-  inside `src/providers/gemini.provider.js`.
+GEMINI_API_KEY
 
-No database drivers or auth libraries are installed yet.
+Required for Gemini requests.
 
----
+The real value must remain in:
 
-## Database Status
+.env
 
-Current status:
-NOT IMPLEMENTED
+and must never be committed.
 
-No database connection, ORM, or schema exists.
+GEMINI_MODEL
 
----
+Optional model override.
 
-## AI Provider Status
+If not provided, the provider uses:
 
-Current provider:
-Gemini (via `@google/genai` v2.18.0)
+gemini-2.5-flash
+Dependencies
 
-`src/providers/gemini.provider.js` exposes `generateText(prompt)`,
-used by `GET /api/ai/test` to prove the round trip works. Model is
-configurable via `GEMINI_MODEL` (default `gemini-2.5-flash`, defined in
-one place in the provider file). No other endpoints use the provider
-yet — this task was scoped to connectivity proof only, not the actual
-chatbot or trip drafting logic.
+Current major runtime dependencies:
 
-The live success path (real API key, real network) has not been
-verified inside this development sandbox — see Known Issues.
+express
+cors
+dotenv
+@google/genai
 
----
+Development dependency:
 
-## Smart Trip Drafting Status
+nodemon
 
-Current status:
-NOT IMPLEMENTED
+No database, ORM, authentication, vector database, embeddings, or RAG
+dependencies have been added yet.
 
-Only the backend skeleton and health check exist. No intent extraction,
-city/activity matching, or itinerary generation logic has been written.
+Database Status
 
----
+Status: NOT IMPLEMENTED
 
-## Frontend Integration Status
+The AI service currently has no direct database connection.
 
-Current status:
-PARTIAL
+Not implemented:
 
-The service runs as a standalone HTTP server with CORS enabled, so any
-frontend (React, Next.js, Vue, Angular, plain JS, mobile, or another
-backend) can already call `GET /health` over HTTP. There are no
-data-returning endpoints yet — nothing for a frontend to build real
-features against.
+PostgreSQL connection
+Prisma
+City table access
+Activity table access
+Trip table access
+User table access
+Budget data access
+Itinerary data access
 
----
+The current chatbot therefore cannot safely claim knowledge of the
+application's actual database records.
 
-## Known Issues
+Smart Trip Drafting Status
 
-- The live Gemini success path (`GET /api/ai/test` with a real,
-  working `GEMINI_API_KEY`) has not been verified in this development
-  sandbox — its network egress allowlist blocks
-  `generativelanguage.googleapis.com`. The code path that handles
-  request/response and errors has been implemented and the *failure*
-  path was verified end-to-end (safe error response, no leaked
-  secrets). The developer should run `GET /api/ai/test` locally with
-  their real key to confirm the success response before relying on
-  this integration.
+Status: NOT IMPLEMENTED
 
----
+The final AI feature described for the hackathon is Smart Trip Drafting.
 
-## Decisions Made
+The following are NOT implemented yet:
 
-- JavaScript (not TypeScript) chosen per explicit project requirement,
-  to keep the codebase approachable for a beginner/intermediate
-  developer.
-- Added a `middleware/` folder (not in the original spec) to house the
-  404 and centralized error handler cleanly, rather than placing that
-  logic in `controllers/` or directly in `index.js`.
-- Default port set to `5001` in `.env.example` to avoid common conflicts
-  with other local dev servers (e.g. `3000`), but this is easily changed
-  by any teammate via `.env`.
-- Empty future folders (`services/`, `prompts/`, `schemas/`) were
-  created in Task 1 (with `.gitkeep`) so the folder structure matches
-  the target architecture from the start, even though they contained no
-  code yet. `providers/` now holds real code as of Task 2.
-- Task 2: kept the Gemini integration to exactly one file exposing one
-  function (`generateText`), per the explicit "don't over-engineer, one
-  provider is enough" instruction, so a second provider can be added
-  later as a sibling file without touching this one.
-- Task 2: chose `gemini-2.5-flash` as the default model — a current,
-  fast, low-cost model appropriate for a hackathon prototype test
-  endpoint — while keeping it fully overridable via `GEMINI_MODEL`.
+Travel-intent extraction
+Budget interpretation
+Candidate city recommendation
+Cost-index filtering
+Activity matching
+Day-by-day itinerary generation
+Database-grounded city selection
+Database-grounded activity selection
+Draft itinerary creation
+Itinerary Builder integration
+Manual reorder/edit integration
 
----
+The current chatbot is only the foundational conversational layer.
 
-## Next Steps
+When Smart Trip Drafting is implemented, the AI must use real database data
+for cities and activities rather than hallucinating records.
 
-- Developer to verify `GET /api/ai/test` against the live Gemini API
-  locally (real key, unrestricted network) before Task 3.
-- Task 3 — Chat API (`POST /api/ai/chat`), building on the existing
-  `generateText` provider function.
+Frontend Integration Status
 
----
+Status: NOT YET INTEGRATED
 
-## Instructions for the Next AI Assistant
+The AI service is intentionally UI-independent.
 
-- This is a hackathon project (GlobeTrotter / Wanderloom, Odoo
-  hackathon). The developer is beginner/intermediate — keep changes
-  small, explain decisions, and do not introduce unrequested features or
-  dependencies.
-- Task 1 and Task 2 are complete: Express server with `GET /health`,
-  CORS, dotenv, a 404 handler, a centralized error handler, and a
-  working Gemini provider (`src/providers/gemini.provider.js`,
-  `generateText(prompt)`) exposed only through `GET /api/ai/test`.
-  There is still no database integration — do not assume it exists.
-- The live Gemini success path was not verified inside the sandbox that
-  built Task 2 (network egress restriction); treat it as
-  implemented-but-not-fully-proven until the developer confirms a real
-  `200` success response locally.
-- Follow the roadmap in the original master prompt (Task 3 through Task
-  15) but implement only one task at a time, and stop after each task
-  for confirmation before continuing.
-- Do not fabricate cities, activities, prices, or IDs when Smart Trip
-  Drafting is eventually implemented (Tasks 7+) — those must come from
-  the real application database once it exists.
-- When building the chat endpoint (Task 3), reuse
-  `generateText(prompt)` from the existing provider rather than adding
-  a second way to call Gemini.
-- Git branch is `manav-work`; never push to `main` or perform
-  destructive git operations without explicit request.
+A frontend can communicate with it through:
+
+POST /api/ai/chat
+
+Example:
+
+{
+  "message": "I want a 5-day trip with beaches and good food."
+}
+
+The current API can therefore be integrated with:
+
+React
+Vue
+Angular
+Plain JavaScript
+Mobile applications
+Other backend services
+
+However, the actual GlobeTrotter frontend chatbot UI has not yet been
+connected to this service.
+
+Not implemented:
+
+Chat UI
+Frontend state management
+Conversation history UI
+User authentication integration
+Streaming responses
+Itinerary Builder integration
+Security
+
+Current security practices:
+
+API key is loaded from environment variables.
+.env is excluded from Git.
+.env.example contains no real credentials.
+API key is never returned in API responses.
+Raw Gemini provider errors are not returned to clients.
+Stack traces are not returned to clients.
+Provider errors are logged server-side.
+
+Never commit:
+
+.env
+
+Never hard-code:
+
+GEMINI_API_KEY
+
+into source code.
+
+Current Limitations
+1. Stateless Chat
+
+The chatbot does not remember previous messages.
+
+Each API request is independent.
+
+2. No Database Grounding
+
+The chatbot does not currently access:
+
+Cities
+Activities
+Trips
+Budgets
+Itineraries
+
+from the main application database.
+
+3. No Authentication
+
+The chat endpoint is not currently associated with a logged-in user.
+
+4. No Rate Limiting
+
+There is currently no application-level rate limiting on the chat endpoint.
+
+5. No Conversation Persistence
+
+Messages are not stored.
+
+6. No Smart Trip Drafting
+
+The chatbot does not yet create structured itinerary drafts.
+
+Decisions Made
+Use JavaScript rather than TypeScript for the standalone AI service.
+Use Express for the HTTP backend.
+Use Gemini as the first AI provider.
+Keep Gemini SDK logic isolated in gemini.provider.js.
+Expose a simple generateText(prompt) provider interface.
+Keep chat business logic in chat.service.js.
+Keep the travel assistant prompt in chat.prompt.js.
+Keep the chatbot UI-independent.
+Keep the chat API stateless for the initial implementation.
+Implement validation before adding complex AI features.
+Avoid database integration until explicitly required.
+Avoid authentication until explicitly required.
+Avoid Smart Trip Drafting until the required database integration exists.
+Do not fabricate cities, activities, prices, or itinerary records.
+Git / Branch Status
+
+Primary development branch:
+
+manav-work
+
+Task 3 code commit:
+
+f47af16
+
+Commit message:
+
+feat(ai-service): add chat service and API
+
+Task 3 code was pushed successfully to:
+
+origin/manav-work
+
+The working tree was clean immediately after the Task 3 commit and push.
+
+Completed Milestone Summary
+Task 1 — Backend Foundation
+        ✅ COMPLETE
+
+Task 2 — Gemini Provider Integration
+        ✅ COMPLETE
+
+Task 3A — Basic Chat API
+        ✅ COMPLETE
+
+Task 3B — Chat Validation
+        ✅ COMPLETE
+
+Task 3C — Documentation
+        ✅ COMPLETE
+
+Task 4
+        ⏳ NOT STARTED
+Verification Summary
+
+The following were successfully verified on the developer's Windows machine.
+
+Health
+GET /health
+
+Result:
+
+HTTP 200
+
+Response:
+
+{
+  "status": "ok",
+  "service": "globetrotter-ai"
+}
+
+PASS
+
+Gemini Test
+GET /api/ai/test
+
+Result:
+
+HTTP 200
+
+Response:
+
+{
+  "success": true,
+  "message": "Gemini connection successful."
+}
+
+PASS
+
+Chat
+POST /api/ai/chat
+
+with:
+
+{
+  "message": "Hello, can you help me plan a trip?"
+}
+
+Result:
+
+HTTP 200
+
+with a real Gemini response.
+
+PASS
+
+Validation
+Missing message      → 400   PASS
+Empty message        → 400   PASS
+Whitespace message   → 400   PASS
+Non-string message   → 400   PASS
+Valid message        → 200   PASS
+Next Task
+Task 4 — NOT STARTED
+
+Do not implement Task 4 until its requirements are explicitly provided.
+
+Before starting Task 4:
+
+Read this file.
+Inspect the existing source code.
+Preserve the existing architecture.
+Do not redo Task 1–3.
+Do not introduce unrelated features.
+Work only on the requested Task 4 scope.
+Update this file after Task 4 is actually completed and tested.
+Instructions for the Next AI Assistant
+
+This project is the GlobeTrotter / Wanderloom AI module for the Odoo
+Hackathon.
+
+The developer prefers controlled, incremental implementation.
+
+Rules
+Read AI_PROGRESS.md before making changes.
+Work only on the requested task.
+Do not redo completed tasks.
+Do not rewrite working code unnecessarily.
+Do not introduce unrelated dependencies.
+Do not expose API keys or secrets.
+Never commit .env.
+Never place a real API key in source code.
+Do not push to main.
+Development branch is manav-work.
+Preserve existing API endpoints.
+Preserve existing Gemini provider architecture.
+Reuse existing services/providers where appropriate.
+Keep the AI service UI-independent.
+Do not claim database access if it has not been implemented.
+Do not fabricate cities, activities, prices, or database records.
+Smart Trip Drafting must eventually be grounded in real application
+database data.
+Do not implement conversation memory unless explicitly requested.
+Do not implement RAG or embeddings unless explicitly requested.
+Do not add authentication unless explicitly requested.
+Do not add database integration unless explicitly requested.
+Implement one task at a time.
+Test the requested functionality before declaring it complete.
+Update AI_PROGRESS.md after completing a task.
+Preserve all previous task history in this file.
+Do not create duplicate progress files.
+Do not commit or push unless explicitly requested by the developer.
+Current Handoff
+
+The AI service currently provides a stable foundation for the future
+GlobeTrotter AI feature.
+
+Current capabilities:
+
+Node.js + Express backend          ✅
+Health endpoint                    ✅
+404 handling                       ✅
+Centralized error handling         ✅
+Gemini provider                    ✅
+Gemini connectivity test           ✅
+Stateless chat API                 ✅
+Chat validation                    ✅
+Real Gemini response               ✅
+UI-independent API                 ✅
+Database integration               ❌
+Authentication                     ❌
+Conversation memory                ❌
+Smart Trip Drafting                ❌
+Frontend chatbot integration       ❌
+Itinerary Builder integration      ❌
+
+The next development step is Task 4, which has not yet been started.
+
+The next AI assistant must wait for the Task 4 requirements before making
+further implementation changes.
