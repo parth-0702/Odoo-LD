@@ -1,5 +1,5 @@
 const express = require("express");
-const { testAiConnection, chat } = require("../controllers/ai.controller");
+const { testAiConnection, chat, extractTripPreferences } = require("../controllers/ai.controller");
 
 const router = express.Router();
 
@@ -8,5 +8,8 @@ router.get("/test", testAiConnection);
 
 // POST /api/ai/chat
 router.post("/chat", chat);
+
+// POST /api/ai/trip/preferences
+router.post("/trip/preferences", extractTripPreferences);
 
 module.exports = router;

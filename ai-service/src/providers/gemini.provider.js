@@ -26,16 +26,27 @@ function getClient() {
  * provider — Gemini SDK details stay inside this file.
  *
  * @param {string} prompt
+ * @param {Object} [options]
+ * @param {string} [options.responseMimeType] Optional response MIME type
+ *   (e.g. "application/json") to ask Gemini to constrain its output format.
+ *   Omitting this preserves the exact prior behavior of this function, so
+ *   existing callers (Task 2/3) are unaffected.
  * @returns {Promise<string>}
  */
-async function generateText(prompt) {
+async function generateText(prompt, options = {}) {
   const ai = getClient();
   const model = process.env.GEMINI_MODEL || DEFAULT_MODEL;
 
-  const response = await ai.models.generateContent({
+  const request = {
     model,
     contents: prompt,
-  });
+  };
+
+  if (options.responseMimeType) {
+    request.config = { responseMimeType: options.responseMimeType };
+  }
+
+  const response = await ai.models.generateContent(request);
 
   return response.text;
 }

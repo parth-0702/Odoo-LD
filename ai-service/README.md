@@ -50,6 +50,57 @@ Response:
 }
 ```
 
+### POST /api/ai/trip/preferences
+
+Extracts structured trip preferences (days, region, budget, interests)
+from a free-text travel request using Gemini. This is preference
+extraction only — no database retrieval, city/activity matching, or
+itinerary generation happens here yet.
+
+Request:
+
+```json
+{
+  "message": "I have 5 days, moderate budget, I love beaches and food, and want to explore Southeast Asia."
+}
+```
+
+Success response:
+
+```json
+{
+  "success": true,
+  "preferences": {
+    "days": 5,
+    "region": "Southeast Asia",
+    "budget": "moderate",
+    "interests": ["beaches", "food"]
+  }
+}
+```
+
+Any field the AI can't confidently determine from the message is `null`
+(or an empty array for `interests`) rather than guessed.
+
+Validation failure (missing/empty/non-string `message`) — HTTP 400:
+
+```json
+{
+  "success": false,
+  "message": "Message is required."
+}
+```
+
+Provider failure (Gemini error, or invalid JSON/structure returned by the
+model) — HTTP 502:
+
+```json
+{
+  "success": false,
+  "message": "AI preference extraction failed."
+}
+```
+
 ## Folder Structure
 
 ```text
