@@ -42,9 +42,7 @@ export function ActivityCard({
           <span className="flex items-center gap-1.5 text-muted-foreground">
             <Clock className="size-3.5" /> {durationLabel(activity.durationMins)}
           </span>
-          <span className="font-semibold">
-            {activity.cost === 0 ? "Free" : inr(activity.cost)}
-          </span>
+          <span className="font-semibold">{activity.cost === 0 ? "Free" : inr(activity.cost)}</span>
         </div>
         {onAdd && (
           <Button

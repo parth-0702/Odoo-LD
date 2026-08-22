@@ -21,9 +21,7 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="font-display text-7xl text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          This route has drifted off the map.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">This route has drifted off the map.</p>
         <div className="mt-6">
           <Link
             to="/"

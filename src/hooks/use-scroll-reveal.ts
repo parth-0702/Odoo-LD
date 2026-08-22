@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 interface ScrollRevealOptions {
   /** Direction the element slides in from. Default: "up" */
@@ -18,16 +19,13 @@ interface ScrollRevealOptions {
 }
 
 /**
- * Attaches a scroll-triggered fade+slide reveal to the returned ref.
- * Uses GSAP ScrollTrigger. Kills cleanly on unmount.
- * Respects prefers-reduced-motion — reduced motion gives a simple fade only.
+ * Attach a scroll-triggered fade-and-slide reveal to the returned ref.
+ * All tweens and ScrollTriggers are scoped to the element and reverted on
+ * unmount, which keeps route changes from leaking animation state.
  */
-export function useScrollReveal<T extends HTMLElement>(
-  options: ScrollRevealOptions = {},
-) {
+export function useScrollReveal<T extends HTMLElement>(options: ScrollRevealOptions = {}) {
   const ref = useRef<T>(null);
   const reducedMotion = useReducedMotion();
-
   const {
     direction = "up",
     distance = 32,
@@ -38,54 +36,41 @@ export function useScrollReveal<T extends HTMLElement>(
   } = options;
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    const element = ref.current;
+    if (!element) return;
 
-    const d = reducedMotion ? 0 : distance;
-    const dur = reducedMotion ? 0.4 : duration;
+    const travel = reducedMotion ? 0 : distance;
+    const context = gsap.context(() => {
+      const fromVars: gsap.TweenVars = {
+        opacity: 0,
+        x: direction === "left" ? -travel : direction === "right" ? travel : 0,
+        y: direction === "up" ? travel : direction === "down" ? -travel : 0,
+      };
+      const targets = stagger > 0 ? element.children : element;
 
-    const fromVars: gsap.TweenVars = {
-      opacity: 0,
-      x: direction === "left" ? -d : direction === "right" ? d : 0,
-      y: direction === "up" ? d : direction === "down" ? -d : 0,
-    };
+      gsap.fromTo(targets, fromVars, {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        duration: reducedMotion ? 0.4 : duration,
+        delay,
+        ease: "power3.out",
+        stagger,
+        scrollTrigger: {
+          trigger: element,
+          start,
+          once: true,
+        },
+      });
+    }, element);
 
-    const toVars: gsap.TweenVars = {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      duration: dur,
-      delay,
-      ease: "power3.out",
-    };
-
-    // If stagger > 0, animate children; otherwise animate the element itself
-    const targets = stagger > 0 ? el.children : el;
-
-    const tween = gsap.fromTo(targets, fromVars, {
-      ...toVars,
-      stagger,
-      scrollTrigger: {
-        trigger: el,
-        start,
-        once: true,
-      },
-    });
-
-    return () => {
-      if (tween.scrollTrigger) tween.scrollTrigger.kill();
-      tween.kill();
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reducedMotion]);
+    return () => context.revert();
+  }, [delay, direction, distance, duration, reducedMotion, stagger, start]);
 
   return ref;
 }
 
-/**
- * Simpler utility: kill all ScrollTriggers attached to an element tree.
- * Useful in effect cleanup.
- */
+/** Kill a known collection of ScrollTriggers. */
 export function killScrollTriggers(triggers: ScrollTrigger[]) {
-  triggers.forEach((t) => t.kill());
+  triggers.forEach((trigger) => trigger.kill());
 }

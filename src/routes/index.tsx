@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef, type CSSProperties } from "react";
+
 import { ArrowRight, ArrowUpRight, Quote } from "lucide-react";
 
 import { SiteNav } from "@/components/site/SiteNav";
@@ -73,12 +74,15 @@ function animateCountUp(
   duration: number,
 ) {
   const start = { val: 0 };
-  gsap.to(start, {
+  return gsap.to(start, {
     val: target,
     duration,
     ease: "power2.out",
     onUpdate() {
-      el.textContent = prefix + (target >= 1000 ? Math.round(start.val / 1000) + "K" : Math.round(start.val).toString()) + suffix;
+      el.textContent =
+        prefix +
+        (target >= 1000 ? Math.round(start.val / 1000) + "K" : Math.round(start.val).toString()) +
+        suffix;
     },
     scrollTrigger: {
       trigger: el,
@@ -136,332 +140,387 @@ function Landing() {
 
   // ----- Hero entrance sequence -----
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion || !heroRef.current) return;
+    const context = gsap.context(() => {
+      const els = [
+        eyebrowRef.current,
+        headlineLine1Ref.current,
+        headlineLine2Ref.current,
+        descRef.current,
+        ctaRef.current,
+        statsRef.current,
+      ].filter(Boolean) as HTMLElement[];
 
-    const els = [
-      eyebrowRef.current,
-      headlineLine1Ref.current,
-      headlineLine2Ref.current,
-      descRef.current,
-      ctaRef.current,
-      statsRef.current,
-    ].filter(Boolean) as HTMLElement[];
-
-    // Set initial state
-    gsap.set(els, { opacity: 0, y: 28 });
-    gsap.set(heroImageWrapRef.current, { opacity: 0, clipPath: "inset(8% 8% 8% 8% round 2.5rem)" });
-    gsap.set(heroImgRef.current, { scale: 1.1 });
-    if (floatLabelsRef.current) {
-      gsap.set(floatLabelsRef.current.children, { opacity: 0, scale: 0.88, y: 10 });
-    }
-
-    // Timeline
-    const tl = gsap.timeline({ delay: 0.1 });
-
-    tl.to(eyebrowRef.current, { opacity: 1, y: 0, duration: 0.55 })
-      .to(headlineLine1Ref.current, { opacity: 1, y: 0, duration: 0.65, ease: "power4.out" }, "-=0.3")
-      .to(headlineLine2Ref.current, { opacity: 1, y: 0, duration: 0.65, ease: "power4.out" }, "-=0.4")
-      .to(descRef.current, { opacity: 1, y: 0, duration: 0.55 }, "-=0.3")
-      .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.5 }, "-=0.25")
-      .to(statsRef.current, { opacity: 1, y: 0, duration: 0.5 }, "-=0.25")
-      // Hero image reveal
-      .to(heroImageWrapRef.current, {
-        opacity: 1,
-        clipPath: "inset(0% 0% 0% 0% round 2.5rem)",
-        duration: 1.0,
-        ease: "power3.inOut",
-      }, 0.2)
-      .to(heroImgRef.current, { scale: 1, duration: 1.4, ease: "power2.out" }, 0.2)
-      // Float labels stagger in
-      .to(floatLabelsRef.current?.children ?? [], {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: "back.out(1.4)",
-      }, 0.8);
-
-    // Subtle hero image parallax on scroll
-    if (heroImgRef.current) {
-      gsap.to(heroImgRef.current, {
-        yPercent: 12,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 1.5,
-        },
+      // Set initial state
+      gsap.set(els, { opacity: 0, y: 28 });
+      gsap.set(heroImageWrapRef.current, {
+        opacity: 0,
+        clipPath: "inset(8% 8% 8% 8% round 2.5rem)",
       });
-    }
+      gsap.set(heroImgRef.current, { scale: 1.1 });
+      if (floatLabelsRef.current) {
+        gsap.set(floatLabelsRef.current.children, { opacity: 0, scale: 0.88, y: 10 });
+      }
 
-    return () => {
-      tl.kill();
-      ScrollTrigger.getAll().forEach((st) => {
-        if (st.trigger === heroRef.current || st.trigger === heroImgRef.current) st.kill();
-      });
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      // Timeline
+      const tl = gsap.timeline({ delay: 0.1 });
+
+      tl.to(eyebrowRef.current, { opacity: 1, y: 0, duration: 0.55 })
+        .to(
+          headlineLine1Ref.current,
+          { opacity: 1, y: 0, duration: 0.65, ease: "power4.out" },
+          "-=0.3",
+        )
+        .to(
+          headlineLine2Ref.current,
+          { opacity: 1, y: 0, duration: 0.65, ease: "power4.out" },
+          "-=0.4",
+        )
+        .to(descRef.current, { opacity: 1, y: 0, duration: 0.55 }, "-=0.3")
+        .to(ctaRef.current, { opacity: 1, y: 0, duration: 0.5 }, "-=0.25")
+        .to(statsRef.current, { opacity: 1, y: 0, duration: 0.5 }, "-=0.25")
+        // Hero image reveal
+        .to(
+          heroImageWrapRef.current,
+          {
+            opacity: 1,
+            clipPath: "inset(0% 0% 0% 0% round 2.5rem)",
+            duration: 1.0,
+            ease: "power3.inOut",
+          },
+          0.2,
+        )
+        .to(heroImgRef.current, { scale: 1, duration: 1.4, ease: "power2.out" }, 0.2)
+        // Float labels stagger in
+        .to(
+          floatLabelsRef.current?.children ?? [],
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: "back.out(1.4)",
+          },
+          0.8,
+        );
+
+      // Subtle hero image parallax on scroll
+      if (heroImgRef.current) {
+        gsap.to(heroImgRef.current, {
+          yPercent: 12,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1.5,
+          },
+        });
+      }
+    }, heroRef.current);
+
+    return () => context.revert();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // ----- Destination section -----
   useEffect(() => {
     if (reducedMotion || !destSectionRef.current || !destGridRef.current) return;
+    const section = destSectionRef.current;
+    const grid = destGridRef.current;
+    const context = gsap.context(() => {
+      const heading = section.querySelector("h2");
 
-    const heading = destSectionRef.current.querySelector("h2");
-    const eyebrow = destSectionRef.current.querySelector(".eyebrow");
-    const link = destSectionRef.current.querySelector("a");
+      const eyebrow = section.querySelector(".eyebrow");
+      const link = section.querySelector("a");
 
-    gsap.set([eyebrow, heading, link], { opacity: 0, y: 24 });
+      gsap.set([eyebrow, heading, link], { opacity: 0, y: 24 });
 
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: destSectionRef.current, start: "top 82%", once: true },
-    });
-    tl.to([eyebrow, heading, link], { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 });
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: section, start: "top 82%", once: true },
+      });
+      tl.to([eyebrow, heading, link], { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 });
 
-    // Card stagger with offset
-    const cards = Array.from(destGridRef.current.children) as HTMLElement[];
-    gsap.set(cards, { opacity: 0, y: 40 });
-    gsap.to(cards, {
-      opacity: 1,
-      y: 0,
-      duration: 0.75,
-      stagger: 0.08,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: destGridRef.current,
-        start: "top 85%",
-        once: true,
-      },
-    });
+      // Card stagger with offset
+      const cards = Array.from(grid.children) as HTMLElement[];
+      gsap.set(cards, { opacity: 0, y: 40 });
+      gsap.to(cards, {
+        opacity: 1,
+        y: 0,
+        duration: 0.75,
+        stagger: 0.08,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: grid,
+          start: "top 85%",
+          once: true,
+        },
+      });
+    }, section);
 
-    return () => { tl.kill(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => context.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // ----- Globe + Stats section -----
   useEffect(() => {
     if (reducedMotion || !globeSectionRef.current) return;
+    const section = globeSectionRef.current;
+    const context = gsap.context(() => {
+      const eyebrow = section.querySelector(".float-label");
 
-    const eyebrow = globeSectionRef.current.querySelector(".float-label");
-    const heading = globeSectionRef.current.querySelector("h2");
-    const statNum = stat22kRef.current;
+      const heading = section.querySelector("h2");
+      const statNum = stat22kRef.current;
 
-    gsap.set([eyebrow, heading, statNum], { opacity: 0, y: 24 });
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: globeSectionRef.current, start: "top 80%", once: true },
-    });
-    tl.to([eyebrow, heading], { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 })
-      .to(statNum, { opacity: 1, y: 0, duration: 0.6 }, "-=0.3");
-
-    // Globe parallax
-    if (globeImgRef.current) {
-      gsap.to(globeImgRef.current, {
-        yPercent: -8,
-        ease: "none",
-        scrollTrigger: {
-          trigger: globeSectionRef.current,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 2,
-        },
+      gsap.set([eyebrow, heading, statNum], { opacity: 0, y: 24 });
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: section, start: "top 80%", once: true },
       });
-    }
+      tl.to([eyebrow, heading], { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 }).to(
+        statNum,
+        { opacity: 1, y: 0, duration: 0.6 },
+        "-=0.3",
+      );
 
-    // Globe float labels stagger
-    if (globeFloatsRef.current) {
-      gsap.set(globeFloatsRef.current.children, { opacity: 0, scale: 0.85 });
-      gsap.to(globeFloatsRef.current.children, {
-        opacity: 1,
-        scale: 1,
-        duration: 0.5,
-        stagger: 0.15,
-        ease: "back.out(1.6)",
-        scrollTrigger: { trigger: globeImgRef.current, start: "top 75%", once: true },
-      });
-    }
+      // Globe parallax
+      if (globeImgRef.current) {
+        gsap.to(globeImgRef.current, {
+          yPercent: -8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 2,
+          },
+        });
+      }
 
-    // Stats cards stagger
-    if (statsCardsRef.current) {
-      gsap.set(statsCardsRef.current.children, { opacity: 0, y: 30 });
-      gsap.to(statsCardsRef.current.children, {
-        opacity: 1,
-        y: 0,
-        duration: 0.65,
-        stagger: 0.12,
-        ease: "power3.out",
-        scrollTrigger: { trigger: statsCardsRef.current, start: "top 85%", once: true },
-      });
-    }
+      // Globe float labels stagger
+      if (globeFloatsRef.current) {
+        gsap.set(globeFloatsRef.current.children, { opacity: 0, scale: 0.85 });
+        gsap.to(globeFloatsRef.current.children, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.15,
+          ease: "back.out(1.6)",
+          scrollTrigger: { trigger: globeImgRef.current, start: "top 75%", once: true },
+        });
+      }
 
-    return () => { tl.kill(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      // Stats cards stagger
+      if (statsCardsRef.current) {
+        gsap.set(statsCardsRef.current.children, { opacity: 0, y: 30 });
+        gsap.to(statsCardsRef.current.children, {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          stagger: 0.12,
+          ease: "power3.out",
+          scrollTrigger: { trigger: statsCardsRef.current, start: "top 85%", once: true },
+        });
+      }
+    }, section);
+
+    return () => context.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // ----- Count-up animations -----
+
   useEffect(() => {
     if (reducedMotion) return;
 
-    if (stat300Ref.current) animateCountUp(stat300Ref.current, 300, "+", "", 1.4);
-    if (stat12kRef.current) animateCountUp(stat12kRef.current, 12000, "+", "", 1.4);
-    if (stat100Ref.current) animateCountUp(stat100Ref.current, 100, "%", "", 1.2);
-    if (stat22kRef.current) animateCountUp(stat22kRef.current, 22000, "+", "", 1.5);
+    const tweens = [
+      stat300Ref.current && animateCountUp(stat300Ref.current, 300, "+", "", 1.4),
+      stat12kRef.current && animateCountUp(stat12kRef.current, 12000, "+", "", 1.4),
+      stat100Ref.current && animateCountUp(stat100Ref.current, 100, "%", "", 1.2),
+      stat22kRef.current && animateCountUp(stat22kRef.current, 22000, "+", "", 1.5),
+    ].filter(Boolean) as gsap.core.Tween[];
 
-    return () => { ScrollTrigger.getAll().forEach((t) => t.kill()); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      tweens.forEach((tween) => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+      });
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // ----- How It Works -----
   useEffect(() => {
     if (reducedMotion || !howWorksRef.current || !stepsRef.current) return;
+    const section = howWorksRef.current;
+    const steps = stepsRef.current;
+    const context = gsap.context(() => {
+      const heading = section.querySelector("h2");
+      const eyebrow = section.querySelector(".eyebrow");
+      gsap.set([eyebrow, heading], { opacity: 0, y: 24 });
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: section, start: "top 82%", once: true },
+      });
+      tl.to([eyebrow, heading], { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 });
 
-    const heading = howWorksRef.current.querySelector("h2");
-    const eyebrow = howWorksRef.current.querySelector(".eyebrow");
-    gsap.set([eyebrow, heading], { opacity: 0, y: 24 });
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: howWorksRef.current, start: "top 82%", once: true },
-    });
-    tl.to([eyebrow, heading], { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 });
+      const stepEls = Array.from(steps.children) as HTMLElement[];
+      gsap.set(stepEls, { opacity: 0, y: 36 });
+      gsap.to(stepEls, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.12,
+        ease: "power3.out",
+        scrollTrigger: { trigger: steps, start: "top 85%", once: true },
+      });
+    }, section);
 
-    const stepEls = Array.from(stepsRef.current.children) as HTMLElement[];
-    gsap.set(stepEls, { opacity: 0, y: 36 });
-    gsap.to(stepEls, {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      stagger: 0.12,
-      ease: "power3.out",
-      scrollTrigger: { trigger: stepsRef.current, start: "top 85%", once: true },
-    });
-
-    return () => { tl.kill(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => context.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // ----- Featured experiences -----
   useEffect(() => {
     if (reducedMotion || !featuredSectionRef.current || !featuredGridRef.current) return;
+    const section = featuredSectionRef.current;
+    const grid = featuredGridRef.current;
+    const context = gsap.context(() => {
+      const heading = section.querySelector("h2");
+      const eyebrow = section.querySelector(".eyebrow");
+      gsap.set([eyebrow, heading], { opacity: 0, y: 24 });
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: section, start: "top 82%", once: true },
+      });
+      tl.to([eyebrow, heading], { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 });
 
-    const heading = featuredSectionRef.current.querySelector("h2");
-    const eyebrow = featuredSectionRef.current.querySelector(".eyebrow");
-    gsap.set([eyebrow, heading], { opacity: 0, y: 24 });
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: featuredSectionRef.current, start: "top 82%", once: true },
-    });
-    tl.to([eyebrow, heading], { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 });
+      const cards = Array.from(grid.children) as HTMLElement[];
+      gsap.set(cards, { opacity: 0, y: 36 });
+      gsap.to(cards, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.1,
+        ease: "power3.out",
+        scrollTrigger: { trigger: grid, start: "top 85%", once: true },
+      });
+    }, section);
 
-    const cards = Array.from(featuredGridRef.current.children) as HTMLElement[];
-    gsap.set(cards, { opacity: 0, y: 36 });
-    gsap.to(cards, {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      stagger: 0.1,
-      ease: "power3.out",
-      scrollTrigger: { trigger: featuredGridRef.current, start: "top 85%", once: true },
-    });
-
-    return () => { tl.kill(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => context.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // ----- Trip planner preview -----
   useEffect(() => {
     if (reducedMotion || !plannerSectionRef.current) return;
+    const context = gsap.context(() => {
+      gsap.set([plannerTextRef.current, plannerCardRef.current], { opacity: 0, y: 36 });
+      gsap.to([plannerTextRef.current, plannerCardRef.current], {
+        opacity: 1,
+        y: 0,
+        duration: 0.75,
+        stagger: 0.15,
+        ease: "power3.out",
+        scrollTrigger: { trigger: plannerSectionRef.current, start: "top 82%", once: true },
+      });
+    }, plannerSectionRef.current);
 
-    gsap.set([plannerTextRef.current, plannerCardRef.current], { opacity: 0, y: 36 });
-    gsap.to([plannerTextRef.current, plannerCardRef.current], {
-      opacity: 1,
-      y: 0,
-      duration: 0.75,
-      stagger: 0.15,
-      ease: "power3.out",
-      scrollTrigger: { trigger: plannerSectionRef.current, start: "top 82%", once: true },
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => context.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // ----- Travel stories -----
   useEffect(() => {
     if (reducedMotion || !storiesSectionRef.current) return;
+    const context = gsap.context(() => {
+      gsap.set([storiesImageRef.current, storiesTextRef.current], { opacity: 0 });
+      gsap.set(storiesImageRef.current, { x: -32 });
+      gsap.set(storiesTextRef.current, { x: 32 });
 
-    gsap.set([storiesImageRef.current, storiesTextRef.current], { opacity: 0 });
-    gsap.set(storiesImageRef.current, { x: -32 });
-    gsap.set(storiesTextRef.current, { x: 32 });
-
-    gsap.to([storiesImageRef.current, storiesTextRef.current], {
-      opacity: 1,
-      x: 0,
-      duration: 0.9,
-      stagger: 0.1,
-      ease: "power3.out",
-      scrollTrigger: { trigger: storiesSectionRef.current, start: "top 80%", once: true },
-    });
-
-    // Blockquote stagger
-    const quotes = storiesTextRef.current?.querySelectorAll("blockquote");
-    if (quotes?.length) {
-      gsap.set(quotes, { opacity: 0, y: 20 });
-      gsap.to(quotes, {
+      gsap.to([storiesImageRef.current, storiesTextRef.current], {
         opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.15,
+        x: 0,
+        duration: 0.9,
+        stagger: 0.1,
         ease: "power3.out",
-        scrollTrigger: { trigger: storiesTextRef.current, start: "top 80%", once: true },
+        scrollTrigger: { trigger: storiesSectionRef.current, start: "top 80%", once: true },
       });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+      // Blockquote stagger
+      const quotes = storiesTextRef.current?.querySelectorAll("blockquote");
+      if (quotes?.length) {
+        gsap.set(quotes, { opacity: 0, y: 20 });
+        gsap.to(quotes, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: "power3.out",
+          scrollTrigger: { trigger: storiesTextRef.current, start: "top 80%", once: true },
+        });
+      }
+    }, storiesSectionRef.current);
+
+    return () => context.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // ----- Community -----
   useEffect(() => {
     if (reducedMotion || !communitySectionRef.current) return;
-
-    const heading = communitySectionRef.current.querySelector("h2");
-    const eyebrow = communitySectionRef.current.querySelector(".eyebrow");
-    gsap.set([eyebrow, heading], { opacity: 0, y: 24 });
-    gsap.to([eyebrow, heading], {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      stagger: 0.12,
-      scrollTrigger: { trigger: communitySectionRef.current, start: "top 82%", once: true },
-    });
-
-    if (communityCardsRef.current) {
-      const cards = Array.from(communityCardsRef.current.children) as HTMLElement[];
-      gsap.set(cards, { opacity: 0, y: 30 });
-      gsap.to(cards, {
+    const section = communitySectionRef.current;
+    const context = gsap.context(() => {
+      const heading = section.querySelector("h2");
+      const eyebrow = section.querySelector(".eyebrow");
+      gsap.set([eyebrow, heading], { opacity: 0, y: 24 });
+      gsap.to([eyebrow, heading], {
         opacity: 1,
         y: 0,
-        duration: 0.65,
-        stagger: 0.1,
-        ease: "power3.out",
-        scrollTrigger: { trigger: communityCardsRef.current, start: "top 85%", once: true },
+        duration: 0.7,
+        stagger: 0.12,
+        scrollTrigger: { trigger: section, start: "top 82%", once: true },
       });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+      if (communityCardsRef.current) {
+        const cards = Array.from(communityCardsRef.current.children) as HTMLElement[];
+        gsap.set(cards, { opacity: 0, y: 30 });
+        gsap.to(cards, {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: communityCardsRef.current, start: "top 85%", once: true },
+        });
+      }
+    }, section);
+
+    return () => context.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   // ----- Final CTA -----
   useEffect(() => {
     if (reducedMotion || !finalCtaRef.current) return;
+    const section = finalCtaRef.current;
+    const context = gsap.context(() => {
+      const heading = section.querySelector("h2");
+      const body = section.querySelector("p");
+      const btns = section.querySelector(".flex");
+      gsap.set([heading, body, btns], { opacity: 0, y: 28 });
+      gsap.to([heading, body, btns], {
+        opacity: 1,
+        y: 0,
+        duration: 0.75,
+        stagger: 0.12,
+        ease: "power3.out",
+        scrollTrigger: { trigger: section, start: "top 82%", once: true },
+      });
+    }, section);
 
-    const heading = finalCtaRef.current.querySelector("h2");
-    const body = finalCtaRef.current.querySelector("p");
-    const btns = finalCtaRef.current.querySelector(".flex");
-    gsap.set([heading, body, btns], { opacity: 0, y: 28 });
-    gsap.to([heading, body, btns], {
-      opacity: 1,
-      y: 0,
-      duration: 0.75,
-      stagger: 0.12,
-      ease: "power3.out",
-      scrollTrigger: { trigger: finalCtaRef.current, start: "top 82%", once: true },
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => context.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reducedMotion]);
 
   return (
@@ -485,14 +544,18 @@ function Landing() {
                 Live the story.
               </em>
             </h1>
-            <p ref={descRef} className="mt-7 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Build personalized multi-city trips, discover unforgettable places, manage
-              your budget and share every journey with the people who matter.
+            <p
+              ref={descRef}
+              className="mt-7 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
+            >
+              Build personalized multi-city trips, discover unforgettable places, manage your budget
+              and share every journey with the people who matter.
             </p>
             <div ref={ctaRef} className="mt-9 flex flex-wrap gap-3">
               <Button asChild size="lg" className="btn-tactile rounded-full px-7">
                 <Link to="/signup">
-                  Plan Your Trip <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                  Plan Your Trip{" "}
+                  <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </Link>
               </Button>
               <Button
@@ -504,7 +567,10 @@ function Landing() {
                 <Link to="/explore/cities">Explore Destinations</Link>
               </Button>
             </div>
-            <dl ref={statsRef} className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-7">
+            <dl
+              ref={statsRef}
+              className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-7"
+            >
               {[
                 ["12,000+", "Explorers planning"],
                 ["300+", "Cities & regions"],
@@ -540,25 +606,25 @@ function Landing() {
             <div ref={floatLabelsRef}>
               <span
                 className="float-label absolute -left-2 top-10 sm:-left-6"
-                style={{ "--float-dur": "5.2s", "--float-delay": "0s" } as React.CSSProperties}
+                style={{ "--float-dur": "5.2s", "--float-delay": "0s" } as CSSProperties}
               >
                 12,000+ explorers
               </span>
               <span
                 className="float-label absolute -right-1 top-1/3 sm:-right-5"
-                style={{ "--float-dur": "6.1s", "--float-delay": "0.8s" } as React.CSSProperties}
+                style={{ "--float-dur": "6.1s", "--float-delay": "0.8s" } as CSSProperties}
               >
                 300+ destinations
               </span>
               <span
                 className="float-label absolute bottom-24 -left-1 sm:-left-8"
-                style={{ "--float-dur": "5.7s", "--float-delay": "1.4s" } as React.CSSProperties}
+                style={{ "--float-dur": "5.7s", "--float-delay": "1.4s" } as CSSProperties}
               >
                 Personalized journeys
               </span>
               <span
                 className="float-label absolute bottom-8 right-4 sm:right-0"
-                style={{ "--float-dur": "6.4s", "--float-delay": "0.4s" } as React.CSSProperties}
+                style={{ "--float-dur": "6.4s", "--float-delay": "0.4s" } as CSSProperties}
               >
                 Budget-aware planning
               </span>
@@ -626,7 +692,10 @@ function Landing() {
         className="border-y border-border bg-secondary/50 px-4 py-24 sm:px-8 sm:py-32"
       >
         <div className="mx-auto max-w-5xl text-center">
-          <span className="float-label" style={{ "--float-dur": "5.8s", "--float-delay": "0s" } as React.CSSProperties}>
+          <span
+            className="float-label"
+            style={{ "--float-dur": "5.8s", "--float-delay": "0s" } as CSSProperties}
+          >
             Real trips, real numbers
           </span>
           <h2 className="display-section mx-auto mt-6 max-w-2xl">
@@ -654,41 +723,49 @@ function Landing() {
             <div ref={globeFloatsRef}>
               <span
                 className="float-label absolute left-0 top-8 sm:left-4"
-                style={{
-                  "--float-dur": "5.3s",
-                  "--float-delay": "0.2s",
-                  "--float-rotate": "-6deg",
-                } as React.CSSProperties}
+                style={
+                  {
+                    "--float-dur": "5.3s",
+                    "--float-delay": "0.2s",
+                    "--float-rotate": "-6deg",
+                  } as CSSProperties
+                }
               >
                 Popular destinations
               </span>
               <span
                 className="float-label absolute right-0 top-16 sm:right-4"
-                style={{
-                  "--float-dur": "6.2s",
-                  "--float-delay": "0.7s",
-                  "--float-rotate": "6deg",
-                } as React.CSSProperties}
+                style={
+                  {
+                    "--float-dur": "6.2s",
+                    "--float-delay": "0.7s",
+                    "--float-rotate": "6deg",
+                  } as CSSProperties
+                }
               >
                 Trending cities
               </span>
               <span
                 className="float-label absolute bottom-24 left-2"
-                style={{
-                  "--float-dur": "5.7s",
-                  "--float-delay": "1.1s",
-                  "--float-rotate": "-3deg",
-                } as React.CSSProperties}
+                style={
+                  {
+                    "--float-dur": "5.7s",
+                    "--float-delay": "1.1s",
+                    "--float-rotate": "-3deg",
+                  } as CSSProperties
+                }
               >
                 Adventure escapes
               </span>
               <span
                 className="float-label absolute bottom-16 right-2"
-                style={{
-                  "--float-dur": "6.5s",
-                  "--float-delay": "0.5s",
-                  "--float-rotate": "3deg",
-                } as React.CSSProperties}
+                style={
+                  {
+                    "--float-dur": "6.5s",
+                    "--float-delay": "0.5s",
+                    "--float-rotate": "3deg",
+                  } as CSSProperties
+                }
               >
                 Budget-friendly trips
               </span>
@@ -770,9 +847,7 @@ function Landing() {
           <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
             <div>
               <p className="eyebrow">Featured experiences</p>
-              <h2 className="display-section mt-4 max-w-xl">
-                Days worth building a trip around
-              </h2>
+              <h2 className="display-section mt-4 max-w-xl">Days worth building a trip around</h2>
             </div>
             <Link
               to="/explore/activities"
@@ -797,13 +872,11 @@ function Landing() {
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div ref={plannerTextRef}>
             <p className="eyebrow">Inside the planner</p>
-            <h2 className="display-section mt-4">
-              Your itinerary, honest about what it costs
-            </h2>
+            <h2 className="display-section mt-4">Your itinerary, honest about what it costs</h2>
             <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-              Add a city, assign nights, and drop activities into any day. GlobeTrotter
-              keeps the timeline, the calendar and the budget in sync so you always know
-              where the money is going.
+              Add a city, assign nights, and drop activities into any day. GlobeTrotter keeps the
+              timeline, the calendar and the budget in sync so you always know where the money is
+              going.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild className="btn-tactile rounded-full px-6">
@@ -821,7 +894,10 @@ function Landing() {
                 <p className="eyebrow">Sample itinerary</p>
                 <h3 className="truncate font-display text-2xl">{sampleTrip.name}</h3>
               </div>
-              <span className="float-label shrink-0" style={{ "--float-dur": "5.5s", "--float-delay": "0.3s" } as React.CSSProperties}>
+              <span
+                className="float-label shrink-0"
+                style={{ "--float-dur": "5.5s", "--float-delay": "0.3s" } as CSSProperties}
+              >
                 8 days · 3 cities
               </span>
             </div>
@@ -844,9 +920,7 @@ function Landing() {
                     <span className="font-semibold">{name}</span>
                     <span className="text-muted-foreground"> · {city}</span>
                   </span>
-                  <span className="shrink-0 text-sm font-semibold">
-                    {inr(Number(cost))}
-                  </span>
+                  <span className="shrink-0 text-sm font-semibold">{inr(Number(cost))}</span>
                 </li>
               ))}
             </ul>
@@ -890,7 +964,10 @@ function Landing() {
                   "Nikita Rao · Japan Discovery",
                 ],
               ].map(([quote, who]) => (
-                <blockquote key={who} className="panel p-6 transition-shadow duration-300 hover:shadow-lift">
+                <blockquote
+                  key={who}
+                  className="panel p-6 transition-shadow duration-300 hover:shadow-lift"
+                >
                   <Quote className="size-5 text-primary" />
                   <p className="mt-3 text-base leading-relaxed">{quote}</p>
                   <footer className="mt-4 text-xs uppercase tracking-[0.12em] text-muted-foreground">
@@ -911,12 +988,10 @@ function Landing() {
           <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
             <div>
               <p className="eyebrow">Community</p>
-              <h2 className="display-section mt-4">
-                Borrow a route. Make it your own.
-              </h2>
+              <h2 className="display-section mt-4">Borrow a route. Make it your own.</h2>
               <p className="mt-6 max-w-lg text-base leading-relaxed text-muted-foreground">
-                Every public itinerary can be copied in one click — dates, cities and
-                activities included. Edit what you like, keep what works.
+                Every public itinerary can be copied in one click — dates, cities and activities
+                included. Edit what you like, keep what works.
               </p>
             </div>
             <div ref={communityCardsRef} className="grid gap-4 sm:grid-cols-2">
@@ -953,19 +1028,22 @@ function Landing() {
               className="grid gap-8 p-8 sm:p-14 lg:grid-cols-[1.2fr_0.8fr] lg:items-center"
             >
               <div>
-                <h2 className="display-section">
-                  Your world. Your route. Your story.
-                </h2>
+                <h2 className="display-section">Your world. Your route. Your story.</h2>
                 <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground">
-                  Create a free account and turn a shortlist of places into a plan you can
-                  actually follow.
+                  Create a free account and turn a shortlist of places into a plan you can actually
+                  follow.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3 lg:justify-end">
                 <Button asChild size="lg" className="btn-tactile rounded-full px-7">
                   <Link to="/signup">Create your account</Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="btn-tactile rounded-full px-7">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="btn-tactile rounded-full px-7"
+                >
                   <Link to="/login">Login</Link>
                 </Button>
               </div>

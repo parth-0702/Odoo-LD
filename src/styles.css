@@ -58,9 +58,12 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  --shadow-soft: 0 1px 2px oklch(0.25 0.03 140 / 0.04), 0 12px 32px -18px oklch(0.25 0.03 140 / 0.18);
-  --shadow-lift: 0 2px 4px oklch(0.25 0.03 140 / 0.05), 0 28px 60px -28px oklch(0.25 0.03 140 / 0.28);
-  --shadow-label: 0 1px 2px oklch(0.2 0.02 140 / 0.06), 0 10px 24px -14px oklch(0.2 0.02 140 / 0.22);
+  --shadow-soft:
+    0 1px 2px oklch(0.25 0.03 140 / 0.04), 0 12px 32px -18px oklch(0.25 0.03 140 / 0.18);
+  --shadow-lift:
+    0 2px 4px oklch(0.25 0.03 140 / 0.05), 0 28px 60px -28px oklch(0.25 0.03 140 / 0.28);
+  --shadow-label:
+    0 1px 2px oklch(0.2 0.02 140 / 0.06), 0 10px 24px -14px oklch(0.2 0.02 140 / 0.22);
 }
 
 :root {
@@ -208,10 +211,16 @@
     transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
   &:hover {
-    transform: translateY(-1px);
+    transform: translateY(-1px) scale(1.01);
+  }
+  &:hover svg {
+    transform: translateX(0.2rem);
   }
   &:active {
-    transform: scale(0.97) translateY(0px);
+    transform: scale(0.98) translateY(0px);
+  }
+  & svg {
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
@@ -226,8 +235,13 @@
 /* Float animation keyframe (used by .float-label)                      */
 /* ------------------------------------------------------------------ */
 @keyframes gt-float {
-  0%, 100% { transform: translateY(0px) rotate(var(--float-rotate, 0deg)); }
-  50%       { transform: translateY(-6px) rotate(var(--float-rotate, 0deg)); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-6px) rotate(var(--float-rotate, 0deg));
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -256,6 +270,9 @@
     transform: none;
   }
   .btn-tactile:hover {
+    transform: none;
+  }
+  .btn-tactile:hover svg {
     transform: none;
   }
   .btn-tactile:active {

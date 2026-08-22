@@ -30,9 +30,7 @@ export function DestinationCard({
       <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-ink/75 via-ink/10 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5">
         <div className="min-w-0">
-          <p className="text-[0.68rem] uppercase tracking-[0.16em] text-white/70">
-            {city.country}
-          </p>
+          <p className="text-[0.68rem] uppercase tracking-[0.16em] text-white/70">{city.country}</p>
           <h3
             className={cn(
               "truncate font-display text-white transition-transform duration-500 group-hover:translate-y-[-2px]",

@@ -12,10 +12,16 @@ export function useReducedMotion(): boolean {
   });
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handleChange = (event: MediaQueryListEvent) => setReduced(event.matches);
+
+    mediaQuery.addEventListener?.("change", handleChange);
+    mediaQuery.addListener?.(handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener?.("change", handleChange);
+      mediaQuery.removeListener?.(handleChange);
+    };
   }, []);
 
   return reduced;

@@ -6,13 +6,7 @@ import { inr } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import type { City } from "@/lib/types";
 
-export function CityCard({
-  city,
-  onAdd,
-}: {
-  city: City;
-  onAdd?: (city: City) => void;
-}) {
+export function CityCard({ city, onAdd }: { city: City; onAdd?: (city: City) => void }) {
   const { isSaved, toggleSaved } = useStore();
   const saved = isSaved(city.id);
 
@@ -50,9 +44,7 @@ export function CityCard({
             {city.costIndex}
           </Badge>
         </div>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          {city.description}
-        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{city.description}</p>
         <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border pt-4 text-sm">
           <div>
             <dt className="text-xs text-muted-foreground">Popularity</dt>

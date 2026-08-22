@@ -1,5 +1,5 @@
-import { useEffect, useRef, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useEffect, useRef, type ReactNode } from "react";
 import {
   Compass,
   FerrisWheel,
@@ -54,8 +54,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <nav className="hide-scrollbar -mx-1 flex min-w-0 flex-1 items-center gap-1 overflow-x-auto px-1">
             {nav.map((item) => {
               const active =
-                pathname === item.to ||
-                (item.to !== "/dashboard" && pathname.startsWith(item.to));
+                pathname === item.to || (item.to !== "/dashboard" && pathname.startsWith(item.to));
               return (
                 <Link
                   key={item.to}
@@ -91,7 +90,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
       </header>
-      <main ref={mainRef} className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 sm:py-10">{children}</main>
+      <main ref={mainRef} className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 sm:py-10">
+        {children}
+      </main>
       <footer className="border-t border-border px-4 py-6 text-xs text-muted-foreground sm:px-6">
         Signed in as {user?.name ?? "guest"} · GlobeTrotter planning workspace
       </footer>
