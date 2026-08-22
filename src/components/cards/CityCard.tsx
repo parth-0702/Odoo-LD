@@ -17,7 +17,7 @@ export function CityCard({
   const saved = isSaved(city.id);
 
   return (
-    <article className="panel image-zoom flex flex-col overflow-hidden">
+    <article className="panel image-zoom card-lift flex flex-col overflow-hidden">
       <div className="relative aspect-[16/10]">
         <img
           src={city.image}

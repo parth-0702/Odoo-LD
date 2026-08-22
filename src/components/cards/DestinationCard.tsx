@@ -19,7 +19,7 @@ export function DestinationCard({
     <Link
       to="/explore/cities"
       search={{ q: city.name }}
-      className={cn("group image-zoom relative block rounded-3xl", ratio, className)}
+      className={cn("group image-zoom card-lift relative block rounded-3xl", ratio, className)}
     >
       <img
         src={city.image}
@@ -27,7 +27,7 @@ export function DestinationCard({
         loading="lazy"
         className="absolute inset-0 size-full rounded-3xl object-cover"
       />
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-ink/75 via-ink/10 to-transparent" />
+      <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-ink/75 via-ink/10 to-transparent transition-opacity duration-500 group-hover:opacity-90" />
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5">
         <div className="min-w-0">
           <p className="text-[0.68rem] uppercase tracking-[0.16em] text-white/70">
@@ -35,7 +35,7 @@ export function DestinationCard({
           </p>
           <h3
             className={cn(
-              "truncate font-display text-white",
+              "truncate font-display text-white transition-transform duration-500 group-hover:translate-y-[-2px]",
               size === "lg" ? "text-4xl" : "text-2xl",
             )}
           >
@@ -45,7 +45,7 @@ export function DestinationCard({
             {city.popularity}% popularity · {city.costIndex} cost
           </p>
         </div>
-        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-card text-foreground transition-transform group-hover:-translate-y-0.5">
+        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-card text-foreground transition-transform duration-300 group-hover:-translate-y-1">
           <ArrowUpRight className="size-4" />
         </span>
       </div>

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Compass,
@@ -28,6 +28,23 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { user, logout } = useStore();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Subtle page entrance on route change
+  useEffect(() => {
+    const el = mainRef.current;
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+    el.style.opacity = "0";
+    el.style.transform = "translateY(8px)";
+    const raf = requestAnimationFrame(() => {
+      el.style.transition = "opacity 0.4s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1)";
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0)";
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [pathname]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -74,7 +91,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 sm:py-10">{children}</main>
+      <main ref={mainRef} className="mx-auto max-w-[1500px] px-4 py-8 sm:px-6 sm:py-10">{children}</main>
       <footer className="border-t border-border px-4 py-6 text-xs text-muted-foreground sm:px-6">
         Signed in as {user?.name ?? "guest"} · GlobeTrotter planning workspace
       </footer>

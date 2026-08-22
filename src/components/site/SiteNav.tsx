@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 
@@ -18,6 +18,7 @@ export function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { isAuthed } = useStore();
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -26,8 +27,29 @@ export function SiteNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Entrance animation — fades/slides down after a short delay
+  // so it doesn't compete with the hero sequence
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
+
+    el.style.opacity = "0";
+    el.style.transform = "translateY(-12px)";
+
+    const timer = setTimeout(() => {
+      el.style.transition = "opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1)";
+      el.style.opacity = "1";
+      el.style.transform = "translateY(0)";
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-5">
+    <header ref={navRef} className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-5">
       <nav
         className={cn(
           "mx-auto flex max-w-6xl items-center justify-between rounded-full border border-border/70 bg-card/85 backdrop-blur-md transition-all duration-300",
@@ -42,24 +64,26 @@ export function SiteNav() {
               key={link.label}
               to={link.to}
               hash={"hash" in link ? link.hash : undefined}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="group relative text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               {link.label}
+              {/* Subtle animated underline */}
+              <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-foreground/40 transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
         </div>
 
         <div className="hidden items-center gap-2 md:flex">
           {isAuthed ? (
-            <Button asChild size="sm" className="rounded-full px-5">
+            <Button asChild size="sm" className="btn-tactile rounded-full px-5">
               <Link to="/dashboard">Dashboard</Link>
             </Button>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm" className="rounded-full">
+              <Button asChild variant="ghost" size="sm" className="btn-tactile rounded-full">
                 <Link to="/login">Login</Link>
               </Button>
-              <Button asChild size="sm" className="rounded-full px-5">
+              <Button asChild size="sm" className="btn-tactile rounded-full px-5">
                 <Link to="/signup">Plan a Trip</Link>
               </Button>
             </>
@@ -70,7 +94,7 @@ export function SiteNav() {
           type="button"
           aria-label="Toggle menu"
           onClick={() => setOpen((v) => !v)}
-          className="grid size-9 place-items-center rounded-full border border-border md:hidden"
+          className="grid size-9 place-items-center rounded-full border border-border transition-colors hover:bg-secondary md:hidden"
         >
           {open ? <X className="size-4" /> : <Menu className="size-4" />}
         </button>

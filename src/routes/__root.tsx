@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "@/lib/store";
 import { Toaster } from "@/components/ui/sonner";
+import { useLenis } from "@/hooks/use-lenis";
 
 function NotFoundComponent() {
   return (
@@ -126,6 +127,8 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  // Initialise Lenis smooth scroll globally (synced with GSAP ScrollTrigger)
+  useLenis();
 
   return (
     <QueryClientProvider client={queryClient}>

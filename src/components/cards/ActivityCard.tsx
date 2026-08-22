@@ -18,7 +18,7 @@ export function ActivityCard({
   const city = cityById(activity.cityId);
 
   return (
-    <article className="panel image-zoom flex flex-col overflow-hidden">
+    <article className="panel image-zoom card-lift flex flex-col overflow-hidden">
       <div className="relative aspect-[16/9]">
         <img
           src={activity.image}
