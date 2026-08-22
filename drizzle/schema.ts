@@ -1,4 +1,4 @@
-import { date, decimal, int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { date, decimal, index, int, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -36,7 +36,7 @@ export const destinations = mysqlTable("gt_destination", {
   description: text("description"),
   coverImage: varchar("coverImage", { length: 512 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, table => [index("destination_region_cost_idx").on(table.region, table.costIndex)]);
 
 export const activities = mysqlTable("gt_activity", {
   id: int("id").autoincrement().primaryKey(),
@@ -46,7 +46,7 @@ export const activities = mysqlTable("gt_activity", {
   description: text("description"),
   estimatedCost: decimal("estimatedCost", { precision: 10, scale: 2 }).default("0").notNull(),
   durationMinutes: int("durationMinutes"),
-});
+}, table => [index("activity_destination_idx").on(table.destinationId)]);
 
 export const trips = mysqlTable("gt_trip", {
   id: int("id").autoincrement().primaryKey(),
@@ -63,7 +63,7 @@ export const trips = mysqlTable("gt_trip", {
   coverImage: varchar("coverImage", { length: 512 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, table => [index("trip_owner_updated_idx").on(table.ownerId, table.updatedAt)]);
 
 export const tripStops = mysqlTable("gt_trip_stop", {
   id: int("id").autoincrement().primaryKey(),
@@ -76,7 +76,7 @@ export const tripStops = mysqlTable("gt_trip_stop", {
   arrivalDate: date("arrivalDate"),
   departureDate: date("departureDate"),
   position: int("position").default(0).notNull(),
-});
+}, table => [index("trip_stop_trip_position_idx").on(table.tripId, table.position)]);
 
 export const itineraryItems = mysqlTable("gt_itinerary_item", {
   id: int("id").autoincrement().primaryKey(),
@@ -89,7 +89,7 @@ export const itineraryItems = mysqlTable("gt_itinerary_item", {
   notes: text("notes"),
   estimatedCost: decimal("estimatedCost", { precision: 10, scale: 2 }).default("0").notNull(),
   position: int("position").default(0).notNull(),
-});
+}, table => [index("itinerary_trip_date_position_idx").on(table.tripId, table.itineraryDate, table.position)]);
 
 export const expenses = mysqlTable("gt_expense", {
   id: int("id").autoincrement().primaryKey(),
@@ -99,7 +99,7 @@ export const expenses = mysqlTable("gt_expense", {
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   expenseDate: date("expenseDate"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, table => [index("expense_trip_created_idx").on(table.tripId, table.createdAt)]);
 
 export const userPreferences = mysqlTable("gt_user_preference", {
   id: int("id").autoincrement().primaryKey(),
@@ -122,4 +122,4 @@ export const favorites = mysqlTable("gt_favorite", {
   userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
   destinationId: int("destinationId").notNull().references(() => destinations.id, { onDelete: "cascade" }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
+}, table => [uniqueIndex("favorite_user_destination_unq").on(table.userId, table.destinationId)]);

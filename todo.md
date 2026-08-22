@@ -104,3 +104,10 @@
 - [x] Validate readable desktop and mobile workspace views and the review evidence.
 - [x] Deliver the scored technical review and onsite-round recommendation.
 - [x] Document post-readability desktop and mobile acceptance for Smart Draft and detailed itinerary text, wrapping, and overflow.
+- [x] Add query indexes and uniqueness constraints for recurring ownership, itinerary, catalog, and favorite lookups.
+- [x] Add a server-side, memory-bounded Smart Draft generation rate limiter with a deterministic error response.
+- [x] Split the authenticated workspace code into lazy-loaded feature chunks to reduce the primary production bundle.
+- [x] Expand tests for rate limiting, helper behavior, and database constraint contracts.
+- [x] Validate schema migration, optimized build output, and revise the technical review to approximately 85%.
+- [x] Add CI quality gates for type checking, tests, and the production build.
+- [x] Add baseline production security headers and verified middleware coverage.

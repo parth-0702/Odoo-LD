@@ -1,11 +1,13 @@
 import { COOKIE_NAME } from "@shared/const";
 import { nanoid } from "nanoid";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { getSmartTripDraft } from "./smartDraft";
+import { smartDraftGenerationLimiter } from "./smartDraftRateLimit";
 
 const tripInput = z.object({
   name: z.string().min(2).max(160),
@@ -66,7 +68,13 @@ export const appRouter = router({
     toggle: protectedProcedure.input(z.object({ city: z.string().min(1).max(120), country: z.string().min(1).max(120), latitude: z.number().min(-90).max(90), longitude: z.number().min(-180).max(180), coverImage: z.string().max(512).optional() })).mutation(({ ctx, input }) => db.toggleFavoriteDestination(ctx.user.id, { ...input, latitude: String(input.latitude), longitude: String(input.longitude) })),
   }),
   smartDraft: router({
-    generate: protectedProcedure.input(z.object({ intent: z.string().min(12).max(800), variation: z.number().int().min(0).max(12).optional() })).mutation(({ input }) => getSmartTripDraft(input.intent.trim(), input.variation ?? 0)),
+    generate: protectedProcedure.input(z.object({ intent: z.string().min(12).max(800), variation: z.number().int().min(0).max(12).optional() })).mutation(({ ctx, input }) => {
+      const limit = smartDraftGenerationLimiter.consume(String(ctx.user.id));
+      if (!limit.allowed) {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: `Please wait ${Math.ceil(limit.retryAfterMs / 1000)} seconds before drafting another route.` });
+      }
+      return getSmartTripDraft(input.intent.trim(), input.variation ?? 0);
+    }),
     createTrip: protectedProcedure.input(z.object({ intent: z.string().min(12).max(800), days: z.number().int().min(2).max(10), budget: z.number().positive(), destinationIds: z.array(z.number().int().positive()).min(1).max(3), schedule: z.array(z.object({ day: z.number().int().min(1).max(10), destinationId: z.number().int().positive(), activityId: z.number().int().positive() })).min(1).max(30) })).mutation(async ({ ctx, input }) => ({ tripId: await db.applySmartTripDraft(ctx.user.id, input) })),
   }),
   admin: router({

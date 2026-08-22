@@ -1,22 +1,25 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { lazy, Suspense } from "react";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import LocalPlan from "./pages/LocalPlan";
-import LocalWorkspace from "./pages/LocalWorkspace";
-import LocalAuth from "./pages/LocalAuth";
-import LocalPublicTrip from "./pages/LocalPublicTrip";
-import LocalAdmin from "./pages/LocalAdmin";
-import AdminDashboard from "./pages/AdminDashboard";
-import PublicTrip from "./pages/PublicTrip";
-import TravelWorkspace from "./pages/TravelWorkspace";
+
+const LocalPlan = lazy(() => import("./pages/LocalPlan"));
+const LocalWorkspace = lazy(() => import("./pages/LocalWorkspace"));
+const LocalAuth = lazy(() => import("./pages/LocalAuth"));
+const LocalPublicTrip = lazy(() => import("./pages/LocalPublicTrip"));
+const LocalAdmin = lazy(() => import("./pages/LocalAdmin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const PublicTrip = lazy(() => import("./pages/PublicTrip"));
+const TravelWorkspace = lazy(() => import("./pages/TravelWorkspace"));
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
+    <Suspense fallback={<main className="loading-page">Opening your travel desk…</main>}>
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/plan"} component={LocalPlan} />
@@ -32,6 +35,7 @@ function Router() {
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
+    </Suspense>
   );
 }
 
